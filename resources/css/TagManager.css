@@ -1,0 +1,12 @@
+.files-view {
+  /*background-color: black;*/
+}
+
+.browser, .files-view {
+  background-color: #171717;
+}
+
+.files-view GtkLabel {
+  color: white;
+  background-color: #171717;
+}
