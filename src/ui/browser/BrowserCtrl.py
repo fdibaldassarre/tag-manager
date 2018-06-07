@@ -2,12 +2,15 @@
 
 from src.Config import ConfigManager
 from src.Logging import createLogger
-from .BrowserUI import BrowserUI
+
+from src.ui.common import ensureLoading
 from src.ui.common import BaseController
 
 from src.dao import metatagsDao
 from src.dao import tagsDao
 from src.dao import filesDao
+
+from .BrowserUI import BrowserUI
 
 UPDATE_METATAGS = 0
 UPDATE_TAGS = 1
@@ -26,17 +29,10 @@ class BrowserCtrl(BaseController):
         super().__init__(*args, **kwargs)
         self.log.debug("Initialize")
         self.ui = BrowserUI(self)
-        self._loaded = False
-        self._setupUpdateEvents()
         self.log.debug("Done")
 
-
-    def _setupUpdateEvents(self):
-        '''
-            Initialize the lists of the functions
-            to call on update event.
-        '''
-        self.on_update = {}
+    def setupUpdateEvents(self):
+        super().setupUpdateEvents()
         self.on_update[UPDATE_METATAGS] = []
         self.on_update[UPDATE_TAGS] = []
         self.on_update[UPDATE_FILES] = []
@@ -44,23 +40,17 @@ class BrowserCtrl(BaseController):
         self.on_update[UPDATE_AVAILABLE_METATAGS] = []
         self.on_update[UPDATE_AVAILABLE_TAGS] = []
 
+    @ensureLoading
     def start(self):
-        '''
-            Start the component.
-        '''
-        self.log.info("Start")
-        if not self._loaded:
-            self._load()
         self.ui.show()
 
-    def _load(self):
+    def load(self):
         self.metatags = metatagsDao.getAll()
         self.tags = tagsDao.getAll()
         self.used_tags = []
         self.files = self._getFiles(self.used_tags)
         self.available_tags = self._getAvailableTags(self.files)
         self.available_metatags = self._getAvailableMetatags(self.available_tags)
-        self._loaded = True
 
     def _getRandomFiles(self):
         '''
@@ -114,10 +104,10 @@ class BrowserCtrl(BaseController):
         self.available_tags = self._getAvailableTags(self.files)
         self.available_metatags = self._getAvailableMetatags(self.available_tags)
         # Trigger
-        self._trigger(UPDATE_USED_TAGS)
-        self._trigger(UPDATE_FILES)
-        self._trigger(UPDATE_AVAILABLE_METATAGS)
-        self._trigger(UPDATE_AVAILABLE_TAGS)
+        self.trigger(UPDATE_USED_TAGS)
+        self.trigger(UPDATE_FILES)
+        self.trigger(UPDATE_AVAILABLE_METATAGS)
+        self.trigger(UPDATE_AVAILABLE_TAGS)
 
 
     def removeTag(self, tag):
@@ -126,10 +116,10 @@ class BrowserCtrl(BaseController):
         self.available_tags = self._getAvailableTags(self.files)
         self.available_metatags = self._getAvailableMetatags(self.available_tags)
         # Trigger
-        self._trigger(UPDATE_USED_TAGS)
-        self._trigger(UPDATE_FILES)
-        self._trigger(UPDATE_AVAILABLE_METATAGS)
-        self._trigger(UPDATE_AVAILABLE_TAGS)
+        self.trigger(UPDATE_USED_TAGS)
+        self.trigger(UPDATE_FILES)
+        self.trigger(UPDATE_AVAILABLE_METATAGS)
+        self.trigger(UPDATE_AVAILABLE_TAGS)
 
     # Update listeners
     def onUpdateMetags(self, func):
@@ -149,11 +139,3 @@ class BrowserCtrl(BaseController):
 
     def onUpdateAvailableTags(self, func):
         self.onUpdate(UPDATE_AVAILABLE_TAGS, func)
-
-    def onUpdate(self, event, func):
-        self.on_update[event].append(func)
-        func()
-
-    def _trigger(self, event):
-        for f in self.on_update[event]:
-            f()

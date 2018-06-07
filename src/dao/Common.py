@@ -235,7 +235,7 @@ class EntityDAO(SessionDAO):
         return entity
 
     @withSession
-    @returnNonPersistent
+    @returnNonPersistentFull
     def insert(self, **values):
         '''
             Insert an entity in the database.

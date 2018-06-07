@@ -8,7 +8,7 @@ class BaseInterface:
         self._inhibit_signals = False
 
     def show(self):
-        raise NotImplemented
+        raise NotImplementedError
 
     def close(self):
         if self.window is not None:

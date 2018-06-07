@@ -19,6 +19,7 @@ ConfigManager.debug = args.debug
 
 # Get the file
 from src.Utils import guessMime
+from src.Thumbnailer import Thumbnailer
 from src.dao import filesDao
 
 filepath = args.file
@@ -26,11 +27,13 @@ name = os.path.relpath(filepath, ConfigManager.getRoot())
 
 file = filesDao.getByName(name)
 if file is None:
-    print("Insert")
+    # Get mime
     mime = guessMime(filepath)
+    # Add to db
     file = filesDao.insert(name=name, mime=mime)
-
-print(file.tags)
+    # Create thumbnail
+    thumbnailer = Thumbnailer(256)
+    thumbnailer.getThumbnail(file)
 
 # Start the application
 from src.ui.Application import TaggerApp

@@ -2,6 +2,8 @@
 
 from src.Logging import createLogger
 from .TaggerUI import TaggerUI
+
+from src.ui.common import ensureLoading
 from src.ui.common import BaseController
 
 from src.dao import metatagsDao
@@ -20,25 +22,16 @@ class TaggerCtrl(BaseController):
         super().__init__(services)
         self.ui = TaggerUI(self)
         self.file = file
-        self._setupUpdateEvents()
         self.log.debug("Initialized")
 
-
-    def _setupUpdateEvents(self):
-        '''
-            Initialize the lists of the functions
-            to call on update event.
-        '''
-        self.on_update = {}
+    def setupUpdateEvents(self):
+        super().setupUpdateEvents()
         self.on_update[UPDATE_METATAGS] = []
         self.on_update[UPDATE_TAGS] = []
         self.on_update[UPDATE_FILE_TAG] = []
 
+    @ensureLoading
     def start(self):
-        '''
-            Start the component.
-        '''
-        self._load()
         self.ui.show()
 
     def stop(self, close_ui=True):
@@ -50,7 +43,7 @@ class TaggerCtrl(BaseController):
         self.log.info("Ui closed, cleanup if necessary")
         # TODO
 
-    def _load(self):
+    def load(self):
         self.metatags = metatagsDao.getAll()
         self.tags = tagsDao.getAll()
 
@@ -74,25 +67,25 @@ class TaggerCtrl(BaseController):
             return
         tag = tagsDao.getById(tag_id)
         self.file = filesDao.addTag(self.file, tag)
-        self._trigger(UPDATE_FILE_TAG, (tag, True))
+        self.trigger(UPDATE_FILE_TAG, (tag, True))
 
     def removeTagFromFile(self, tag_id):
         if not self.fileHasTag(tag_id):
             return
         tag = tagsDao.getById(tag_id)
         self.file = filesDao.removeTag(self.file, tag)
-        self._trigger(UPDATE_FILE_TAG, (tag, False))
+        self.trigger(UPDATE_FILE_TAG, (tag, False))
 
     def createMetatag(self, name):
         metatag = metatagsDao.insert(name)
         self.metatags = metatagsDao.getAll()
-        self._trigger(UPDATE_METATAGS)
+        self.trigger(UPDATE_METATAGS)
         return metatag
 
     def createTag(self, name, metatag):
         tag = tagsDao.insert(name, metatag)
         self.tags = tagsDao.getAll()
-        self._trigger(UPDATE_TAGS)
+        self.trigger(UPDATE_TAGS)
         return tag
 
     # Update listeners
@@ -104,14 +97,3 @@ class TaggerCtrl(BaseController):
 
     def onUpdateFileTag(self, func):
         self.onUpdate(UPDATE_FILE_TAG, func)
-
-    def onUpdate(self, event, func):
-        self.on_update[event].append(func)
-        func()
-
-    def _trigger(self, event, data=None):
-        for f in self.on_update[event]:
-            if data is None:
-                f()
-            else:
-                f(*data)

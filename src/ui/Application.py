@@ -10,6 +10,7 @@ from gi.repository import Gdk
 
 from .browser.BrowserCtrl import BrowserCtrl
 from .tagger.TaggerCtrl import TaggerCtrl
+from .mover.MoverCtrl import MoverCtrl
 from src.Places import CSS_FOLDER
 
 class ServiceManager:
@@ -52,3 +53,12 @@ class TaggerApp(TagManagerApp):
 
     def do_activate(self, data=None):
         self.tagger.start()
+
+class MoverApp(TagManagerApp):
+
+    def __init__(self, file):
+        super().__init__()
+        self.mover = MoverCtrl(self.services, file)
+
+    def do_activate(self, data=None):
+        self.mover.start()
