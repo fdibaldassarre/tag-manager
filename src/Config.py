@@ -119,4 +119,7 @@ class _ConfigManager:
     def getRoot(self):
         return self.settings[MAIN_ROOT]
 
+    def getProfileName(self):
+        return os.path.basename(self.profile_folder)
+
 ConfigManager = _ConfigManager()
