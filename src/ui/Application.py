@@ -56,9 +56,23 @@ class TaggerApp(TagManagerApp):
 
 class MoverApp(TagManagerApp):
 
-    def __init__(self, file):
+    def __init__(self, path):
+        '''
+            Initialize.
+
+            :param str path: Path of the file to move to the root folder
+        '''
         super().__init__()
-        self.mover = MoverCtrl(self.services, file)
+        self.mover = MoverCtrl(self.services, path)
 
     def do_activate(self, data=None):
         self.mover.start()
+
+    def openTagger(self, file):
+        '''
+            Open the tagger for a file.
+
+            :param dao.entities.common.IFile file: File to tag
+        '''
+        self.tagger = TaggerCtrl(self.services, file)
+        self.tagger.start()

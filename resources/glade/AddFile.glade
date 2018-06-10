@@ -2,12 +2,11 @@
 <!-- Generated with glade 3.22.1 -->
 <interface>
   <requires lib="gtk+" version="3.20"/>
-  <object class="GtkWindow" id="AMMainWindow">
+  <object class="GtkWindow" id="Main">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <property name="border_width">10</property>
     <property name="window_position">center-always</property>
-    <signal name="destroy" handler="close" swapped="no"/>
     <child>
       <placeholder/>
     </child>
@@ -16,17 +15,19 @@
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <property name="orientation">vertical</property>
+        <property name="spacing">10</property>
         <child>
           <object class="GtkBox">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="halign">center</property>
+            <property name="orientation">vertical</property>
             <child>
-              <object class="GtkLabel">
+              <object class="GtkLabel" id="SourceName">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="margin_right">5</property>
-                <property name="label" translatable="yes">Source file: </property>
+                <property name="label" translatable="yes">Source: filename</property>
+                <property name="selectable">True</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -35,15 +36,40 @@
               </packing>
             </child>
             <child>
-              <object class="GtkLabel" id="AMLabelBasename">
+              <object class="GtkBox">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="label" translatable="yes">filename</property>
+                <child>
+                  <object class="GtkLabel" id="DestinationLabel">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="margin_right">3</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkEntry" id="DestinationName">
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="hexpand">True</property>
+                    <property name="text" translatable="yes">filename</property>
+                    <signal name="changed" handler="onUpdateFilename" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
               </object>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="position">1</property>
+                <property name="position">2</property>
               </packing>
             </child>
           </object>
@@ -58,29 +84,31 @@
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <child>
-              <object class="GtkLabel">
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="margin_right">5</property>
-                <property name="label" translatable="yes">Target name:</property>
-              </object>
-              <packing>
-                <property name="left_attach">0</property>
-                <property name="top_attach">0</property>
-              </packing>
+              <placeholder/>
             </child>
             <child>
-              <object class="GtkEntry" id="AMEntryName">
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="hexpand">True</property>
-                <property name="text" translatable="yes">filename</property>
-                <signal name="changed" handler="updateDestination" swapped="no"/>
-              </object>
-              <packing>
-                <property name="left_attach">1</property>
-                <property name="top_attach">0</property>
-              </packing>
+              <placeholder/>
+            </child>
+            <child>
+              <placeholder/>
+            </child>
+            <child>
+              <placeholder/>
+            </child>
+            <child>
+              <placeholder/>
+            </child>
+            <child>
+              <placeholder/>
+            </child>
+            <child>
+              <placeholder/>
+            </child>
+            <child>
+              <placeholder/>
+            </child>
+            <child>
+              <placeholder/>
             </child>
           </object>
           <packing>
@@ -90,51 +118,18 @@
           </packing>
         </child>
         <child>
-          <object class="GtkBox">
-            <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="halign">center</property>
-            <child>
-              <object class="GtkLabel">
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="margin_right">5</property>
-                <property name="label" translatable="yes">Target folder: </property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">0</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkLabel" id="DestinationLabel">
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="label" translatable="yes">folder</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">1</property>
-              </packing>
-            </child>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">2</property>
-          </packing>
-        </child>
-        <child>
-          <placeholder/>
-        </child>
-        <child>
-          <object class="GtkBox" id="CustomGrid">
+          <object class="GtkBox" id="CustomSelectors">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="orientation">vertical</property>
             <property name="spacing">5</property>
+            <property name="homogeneous">True</property>
+            <child>
+              <placeholder/>
+            </child>
+            <child>
+              <placeholder/>
+            </child>
             <child>
               <placeholder/>
             </child>
@@ -142,7 +137,7 @@
           <packing>
             <property name="expand">False</property>
             <property name="fill">True</property>
-            <property name="position">4</property>
+            <property name="position">2</property>
           </packing>
         </child>
         <child>
@@ -157,7 +152,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
-                <signal name="clicked" handler="add" swapped="no"/>
+                <signal name="clicked" handler="onAdd" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -171,7 +166,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
-                <signal name="clicked" handler="close" swapped="no"/>
+                <signal name="clicked" handler="onCancel" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>

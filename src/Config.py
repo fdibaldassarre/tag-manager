@@ -34,6 +34,9 @@ class ChildConfig:
 
 UI_METATAG = "default-metatag"
 UI_RANDOMIZE = "randomize"
+UI_MOVER_METATAGS = "mover-metatags"
+UI_MOVER_TARGET_FOLDER = "mover-target-folder"
+UI_MOVER_CUSTOM_PATTERN_KEYS = "mover-custom-keys"
 
 class UISettings(ChildConfig):
     symbol = CONFIG_UI
@@ -43,6 +46,22 @@ class UISettings(ChildConfig):
 
     def getRandomize(self):
         return self.getConfig(UI_RANDOMIZE)
+
+    def getMoverMetatags(self):
+        return self.getConfig(UI_MOVER_METATAGS)
+
+    def getMoverTargetFolder(self):
+        return self.getConfig(UI_MOVER_TARGET_FOLDER)
+
+    def getMoverCustomPatternKeys(self):
+        return self.getConfig(UI_MOVER_CUSTOM_PATTERN_KEYS)
+
+    def getMoverCustomPatternKeysEvaluator(self):
+        return os.path.join(self.config_manager.profile_folder, 'modules/moverKeys.py')
+
+    def getMoverDefaultValues(self):
+        return os.path.join(self.config_manager.profile_folder, 'modules/moverDefaults.py')
+
 
 SERVER_PORT = "port"
 

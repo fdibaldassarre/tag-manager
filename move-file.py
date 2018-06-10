@@ -16,7 +16,7 @@ profile = args.profile
 debug = args.debug
 
 if not os.path.exists(path):
-    print("Missing file %d" % path)
+    print("Missing file %s" % path)
     sys.exit(1)
 
 # Configure the application

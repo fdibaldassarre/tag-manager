@@ -18,25 +18,19 @@ ConfigManager.setup(profile_folder)
 ConfigManager.debug = args.debug
 
 # Get the file
-from src.Utils import guessMime
-from src.Thumbnailer import Thumbnailer
 from src.dao import filesDao
+from src.System import addFile
+from src.System import getRootRelativePath
+from src.ui.Application import TaggerApp
 
 filepath = args.file
-name = os.path.relpath(filepath, ConfigManager.getRoot())
+name = getRootRelativePath(filepath)
+# name = os.path.relpath(filepath, ConfigManager.getRoot())
 
 file = filesDao.getByName(name)
 if file is None:
-    # Get mime
-    mime = guessMime(filepath)
-    # Add to db
-    file = filesDao.insert(name=name, mime=mime)
-    # Create thumbnail
-    thumbnailer = Thumbnailer(256)
-    thumbnailer.getThumbnail(file)
+    file = addFile(filepath)
 
 # Start the application
-from src.ui.Application import TaggerApp
-
 app = TaggerApp(file)
 app.run(None)
