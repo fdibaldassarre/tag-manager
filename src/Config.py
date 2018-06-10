@@ -37,6 +37,7 @@ UI_RANDOMIZE = "randomize"
 UI_MOVER_METATAGS = "mover-metatags"
 UI_MOVER_TARGET_FOLDER = "mover-target-folder"
 UI_MOVER_CUSTOM_PATTERN_KEYS = "mover-custom-keys"
+UI_MOVER_OPEN_ON_TAG = "mover-open-on-tag"
 
 class UISettings(ChildConfig):
     symbol = CONFIG_UI
@@ -61,6 +62,9 @@ class UISettings(ChildConfig):
 
     def getMoverDefaultValues(self):
         return os.path.join(self.config_manager.profile_folder, 'modules/moverDefaults.py')
+
+    def getMoverOpenOnTag(self):
+        return self.getConfig(UI_MOVER_OPEN_ON_TAG)
 
 
 SERVER_PORT = "port"

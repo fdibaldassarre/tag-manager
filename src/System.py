@@ -14,7 +14,7 @@ def openFile(relpath):
     '''
         Try to open a file.
 
-        :param str relpath: Path of the file relative to the configired root
+        :param str relpath: Path of the file relative to the configured root
         :return: False if the file was not found, True otherwise
         :rtype: bool
     '''

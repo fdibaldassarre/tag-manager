@@ -6,6 +6,7 @@ import shutil
 from src.Config import ConfigManager
 from src.Logging import createLogger
 from src.System import addFile
+from src.System import openFile
 from src.Utils import loadModuleFromPath
 
 from src.dao import filesDao
@@ -128,11 +129,14 @@ class MoverCtrl(BaseController):
             self.log.info("Add tag %s" % name)
             tag = tagsDao.getByName(name)
             if tag is None:
-                self.log.info("Create tag %s [%d]" % (name, metatag.name))
+                self.log.info("Create tag %s [%s]" % (name, metatag.name))
                 tag = tagsDao.insert(name, metatag)
             file = filesDao.addTag(file, tag)
         tagsDao.closeSession(commit=True)
         filesDao.closeSession(commit=True)
+        # Open file
+        if ConfigManager.UI.getMoverOpenOnTag():
+            openFile(file.name)
         self.services.getApplication().openTagger(file)
         return file
 
