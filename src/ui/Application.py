@@ -36,6 +36,18 @@ class TagManagerApp(Gtk.Application):
     def do_activate(self, data=None):
         self.browser.start()
 
+    def openTagger(self, file):
+        '''
+            Open the tagger for a file.
+
+            :param dao.entities.common.IFile file: File to tag
+            :return: Tagger controller
+            :rtype: ui.tagger.TaggerCtrl
+        '''
+        self.tagger = TaggerCtrl(self.services, file)
+        self.tagger.start()
+        return self.tagger
+
     def _loadCssProvider(self):
         display = Gdk.Display.get_default()
         screen = Gdk.Display.get_default_screen(display)
@@ -67,12 +79,3 @@ class MoverApp(TagManagerApp):
 
     def do_activate(self, data=None):
         self.mover.start()
-
-    def openTagger(self, file):
-        '''
-            Open the tagger for a file.
-
-            :param dao.entities.common.IFile file: File to tag
-        '''
-        self.tagger = TaggerCtrl(self.services, file)
-        self.tagger.start()

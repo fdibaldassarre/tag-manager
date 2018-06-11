@@ -109,7 +109,6 @@ class BrowserCtrl(BaseController):
         self.trigger(UPDATE_AVAILABLE_METATAGS)
         self.trigger(UPDATE_AVAILABLE_TAGS)
 
-
     def removeTag(self, tag):
         self.used_tags.remove(tag)
         self.files = self._getFiles(self.used_tags)
@@ -120,6 +119,9 @@ class BrowserCtrl(BaseController):
         self.trigger(UPDATE_FILES)
         self.trigger(UPDATE_AVAILABLE_METATAGS)
         self.trigger(UPDATE_AVAILABLE_TAGS)
+
+    def openTagger(self, file):
+        tagger_ctrl = self.services.getApplication().openTagger(file)
 
     # Update listeners
     def onUpdateMetags(self, func):

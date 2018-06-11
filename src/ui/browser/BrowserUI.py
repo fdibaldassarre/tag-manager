@@ -4,6 +4,7 @@ import os
 
 from src.Logging import createLogger
 from gi.repository import Gtk
+from gi.repository import Gdk
 from gi.repository.GObject import GType
 from gi.repository.GdkPixbuf import Pixbuf
 
@@ -277,6 +278,13 @@ class BrowserUI(BaseInterface):
                 break
         return default
 
+    def _getFileInStore(self, file_id):
+        file = None
+        for cfile in self.ctrl.files:
+            if cfile.id == file_id:
+                file = cfile
+                break
+        return file
 
     @withInhibit
     def onMetatagChange(self, widget):
@@ -312,3 +320,19 @@ class BrowserUI(BaseInterface):
         relpath = self.files_store[findex][-1]
         self.log.info("Opening file: %s" % relpath)
         openFile(relpath)
+
+    def onButtonPress(self, widget, event):
+        # event.button == 3 iff right-click
+        if event.type != Gdk.EventType.BUTTON_PRESS or event.button != 3:
+            return False
+        coords = event.get_coords()
+        ipath = widget.get_path_at_pos(coords[0], coords[1])
+        if ipath is None:
+            return False
+        # Show right-click menu
+        # FIXME: atm I open the tagger automatically
+        file_id = self.files_store[ipath][0]
+        file = self._getFileInStore(file_id)
+        self.log.debug("Right click on file: %s" % file.name)
+        self.ctrl.openTagger(file)
+        return True

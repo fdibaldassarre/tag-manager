@@ -44,6 +44,7 @@
                     <property name="vexpand">True</property>
                     <property name="item_width">200</property>
                     <property name="activate_on_single_click">True</property>
+                    <signal name="button-press-event" handler="onButtonPress" swapped="no"/>
                     <signal name="item-activated" handler="onFileClick" swapped="no"/>
                     <style>
                       <class name="files-view"/>

@@ -22,6 +22,9 @@ class TaggerCtrl(BaseController):
         super().__init__(services)
         self.ui = TaggerUI(self)
         self.file = file
+        # Ensure tags are defined
+        if not hasattr(self.file, 'tags'):
+            self.file = filesDao.getById(self.file.id)
         self.log.debug("Initialized")
 
     def setupUpdateEvents(self):
