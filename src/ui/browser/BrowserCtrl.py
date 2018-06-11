@@ -10,6 +10,8 @@ from src.dao import metatagsDao
 from src.dao import tagsDao
 from src.dao import filesDao
 
+from src import System
+
 from .BrowserUI import BrowserUI
 
 UPDATE_METATAGS = 0
@@ -122,6 +124,26 @@ class BrowserCtrl(BaseController):
 
     def openTagger(self, file):
         tagger_ctrl = self.services.getApplication().openTagger(file)
+
+    def removeFile(self, file):
+        '''
+            Remove a file from database and filesystem.
+
+            :param dao.entities.IFileLazy file: File to remove
+        '''
+        # Remove the file from the system
+        System.removeFile(file)
+        # Remove file from the list
+        for cfile in self.files:
+            if cfile.id == file.id:
+                self.files.remove(cfile)
+                break
+        # Update tags and metatags
+        self.available_tags = self._getAvailableTags(self.files)
+        self.available_metatags = self._getAvailableMetatags(self.available_tags)
+        self.trigger(UPDATE_FILES)
+        self.trigger(UPDATE_AVAILABLE_METATAGS)
+        self.trigger(UPDATE_AVAILABLE_TAGS)
 
     # Update listeners
     def onUpdateMetags(self, func):

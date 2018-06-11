@@ -2,7 +2,6 @@
 
 import os
 
-from src.Logging import createLogger
 from gi.repository import Gtk
 from gi.repository import Gdk
 from gi.repository.GObject import GType
@@ -16,6 +15,8 @@ from src.ui.common import BaseInterface
 from src.ui.Utils import inhibitSignals
 from src.ui.Utils import withInhibit
 from src.System import openFile
+
+from .menu import FilesViewMenu
 
 ICON_SIZE = 256
 
@@ -53,6 +54,8 @@ class BrowserUI(BaseInterface):
         self.metatag_selected = self._getDefaultMetatag()
         self.selected_tag_name = ''
         self.files_limit = FILES_LIMIT
+        # Set menu
+        self.files_view_menu = FilesViewMenu.new(self.openFolder, self.openTagger, self.removeFile)
         # Setup files view
         self.files_store = Gtk.ListStore(int, str, Pixbuf, str)
         files_view = self.builder.get_object('FilesView')
@@ -286,6 +289,54 @@ class BrowserUI(BaseInterface):
                 break
         return file
 
+    # Menu options
+    def _getFilesViewSelected(self):
+        '''
+            Get the file currently selected in the files view.
+            Return only if there is only one file selected.
+
+            :return: The selected file if any, None otherwise
+            :rtype: dao.entities.IFileLazy
+        '''
+        filesview = self.builder.get_object('FilesView')
+        paths = filesview.get_selected_items()
+        if len(paths) != 1:
+            return None
+        path = paths[0]
+        file_id = self.files_store[path][0]
+        file = self._getFileInStore(file_id)
+        return file
+
+    def openFolder(self, widget, data):
+        file = self._getFilesViewSelected()
+        if file is None:
+            return
+        folder = os.path.dirname(file.name)
+        self.log.info("Opening folder: %s" % folder)
+        openFile(folder)
+
+    def openTagger(self, widget, data):
+        file = self._getFilesViewSelected()
+        if file is None:
+            return
+        self.log.info("Opening tagger for: %s" % file.name)
+        self.ctrl.openTagger(file)
+
+    def removeFile(self, widget, data):
+        file = self._getFilesViewSelected()
+        if file is None:
+            return
+        self.log.info("Confirm file removal: %s" % file.name)
+        onConfirm = lambda : self.onRemoveFile(file)
+        dialog = self.createConfirmationDialog("Confirm deletion",
+                                               "Do you want to delete %s ?" % file.name,
+                                               onConfirm)
+
+    def onRemoveFile(self, file):
+        self.log.info("Delete file: %s" % file.name)
+        self.ctrl.removeFile(file)
+
+
     @withInhibit
     def onMetatagChange(self, widget):
         '''
@@ -329,10 +380,10 @@ class BrowserUI(BaseInterface):
         ipath = widget.get_path_at_pos(coords[0], coords[1])
         if ipath is None:
             return False
+        # Unselect other paths
+        widget.unselect_all()
+        # select the element
+        widget.select_path(ipath)
         # Show right-click menu
-        # FIXME: atm I open the tagger automatically
-        file_id = self.files_store[ipath][0]
-        file = self._getFileInStore(file_id)
-        self.log.debug("Right click on file: %s" % file.name)
-        self.ctrl.openTagger(file)
+        self.files_view_menu.popup(None, None, None, None, event.button, event.time)
         return True

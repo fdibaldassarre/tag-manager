@@ -50,3 +50,15 @@ def addFile(path):
     # Create thumbnail
     thumbnailer.getThumbnail(file)
     return file
+
+def removeFile(file):
+    '''
+        Remove a file from database and filesystem.
+
+        :param dao.entities.IFileLazy: file
+    '''
+    filesDao.delete(file)
+    thumbnailer.removeThumbnail(file)
+    path = os.path.join(ConfigManager.getRoot(), file.name)
+    if os.path.exists(path):
+        os.remove(path)

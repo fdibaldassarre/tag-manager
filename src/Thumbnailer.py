@@ -57,6 +57,13 @@ class Thumbnailer():
             return None
 
     def _getThumbnailPath(self, tfile):
+        '''
+            Get the thumbail path for the given file.
+
+            :param dao.entities.IFileLazy file: File
+            :return: The path of the thumbnail (may not exist on filesystem)
+            :rtype: str
+        '''
         icon_folder = os.path.join(self.thumbnails_folder, str(self.icon_size))
         return os.path.join(icon_folder, str(tfile.id) + THUMB_EXTENSION)
 
@@ -65,8 +72,13 @@ class Thumbnailer():
         return os.path.join(icon_folder, str(tfile.id) + THUMB_EXTENSION)
 
     def removeThumbnail(self, tfile):
-        thumb_file = self.getThumbnailPath(tfile)
-        thumb_fail_file = self.getThumbnailFailPath(tfile)
+        '''
+            Remove the thumbnails associated with the given file.
+
+            :param dao.entities.IFileLazy tfile: File
+        '''
+        thumb_file = self._getThumbnailPath(tfile)
+        thumb_fail_file = self._getThumbnailFailPath(tfile)
         if os.path.exists(thumb_file):
             os.remove(thumb_file)
         if os.path.exists(thumb_fail_file):
