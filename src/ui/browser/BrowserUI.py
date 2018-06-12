@@ -38,38 +38,33 @@ class BrowserUI(BaseInterface):
             Build the interface. Should be called only once.
         '''
         self.log.debug("Building...")
-        self.builder = Gtk.Builder()
-        ui_file = os.path.join(GLADE_FOLDER, 'Browser.glade')
-        self.builder.add_from_file(ui_file)
+        # Load the builder
+        self.builder = self._loadBuilder()
         # Set the logo
         self._setLogo()
         # Register main window
-        self.window = self.builder.get_object("Main")
-        self.window.resize(1300, 800)
-        app = self.ctrl.services.getApplication()
-        app.add_window(self.window)
+        self._loadMainWindow()
         # Update the UI
-        self.metatag_selected = self._getDefaultMetatag()
-        self.selected_tag_name = ''
-        self.files_limit = FILES_LIMIT
-        # Set menu
-        self.files_view_menu = FilesViewMenu.new(self.openFolder, self.openTagger, self.removeFile)
+        self._initializeUIVariables()
         # Setup files view
-        self.files_store = Gtk.ListStore(int, str, Pixbuf, str)
-        files_view = self.builder.get_object('FilesView')
-        files_view.set_text_column(1)
-        files_view.set_pixbuf_column(2)
-        files_view.set_model(self.files_store)
-        # Register the create events
-        self.ctrl.onUpdateTags(self.recreateTagsList)
-        self.ctrl.onUpdateAvailableMetatags(self.updateMetatagSelector)
-        # Register the update events
-        self.ctrl.onUpdateAvailableTags(self.updateTagsList)
-        self.ctrl.onUpdateFiles(self.updateFilesList)
-        self.ctrl.onUpdateUsedTags(self.updateUsedTags)
+        self._setupFilesView()
+        # Resgister events on the controller
+        self._registerEvents()
         # Add a signal handler
         self.builder.connect_signals(self)
         self.log.debug("Done")
+
+    def _loadBuilder(self):
+        '''
+            Load the gtk builder.
+
+            :return: The UI builder
+            :rtype: Gtk.Builder
+        '''
+        builder = Gtk.Builder()
+        ui_file = os.path.join(GLADE_FOLDER, 'Browser.glade')
+        builder.add_from_file(ui_file)
+        return builder
 
     def _setLogo(self):
         '''
@@ -80,6 +75,51 @@ class BrowserUI(BaseInterface):
         if not os.path.exists(logo_file):
             logo_file = os.path.join(ICONS_FOLDER, "logo.png")
         logo.set_from_pixbuf(Pixbuf.new_from_file(logo_file))
+
+    def _loadMainWindow(self):
+        '''
+            Load the main window, set the default size
+            and register on the application.
+        '''
+        self.window = self.builder.get_object("Main")
+        self.window.resize(1300, 800)
+        # Register main window
+        app = self.ctrl.services.getApplication()
+        app.add_window(self.window)
+
+    def _initializeUIVariables(self):
+        '''
+            Initialize the variables used in the UI.
+        '''
+        self.metatag_selected = self._getDefaultMetatag()
+        self.selected_tag_name = ''
+        self.files_limit = FILES_LIMIT
+
+    def _setupFilesView(self):
+        '''
+            Create setup the files view and create its right-click menu.
+        '''
+        # Set menu
+        self.files_view_menu = FilesViewMenu.new(self.openFolder, self.openTagger, self.removeFile)
+        # Set files store
+        self.files_store = Gtk.ListStore(int, str, Pixbuf, str)
+        # Setup files view
+        files_view = self.builder.get_object('FilesView')
+        files_view.set_text_column(1)
+        files_view.set_pixbuf_column(2)
+        files_view.set_model(self.files_store)
+
+    def _registerEvents(self):
+        '''
+            Register the event listeners on the controller.
+        '''
+        # Register the create event
+        self.ctrl.onUpdateTags(self.recreateTagsList)
+        self.ctrl.onUpdateAvailableMetatags(self.updateMetatagSelector)
+        # Register the update events
+        self.ctrl.onUpdateAvailableTags(self.updateTagsList)
+        self.ctrl.onUpdateFiles(self.updateFilesList)
+        self.ctrl.onUpdateUsedTags(self.updateUsedTags)
 
     def show(self):
         '''
