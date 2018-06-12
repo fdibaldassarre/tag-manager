@@ -42,9 +42,7 @@ class BrowserUI(BaseInterface):
         ui_file = os.path.join(GLADE_FOLDER, 'Browser.glade')
         self.builder.add_from_file(ui_file)
         # Set the logo
-        logo = self.builder.get_object("Logo")
-        logo_file = os.path.join(ICONS_FOLDER, "logo.png")
-        logo.set_from_pixbuf(Pixbuf.new_from_file(logo_file))
+        self._setLogo()
         # Register main window
         self.window = self.builder.get_object("Main")
         self.window.resize(1300, 800)
@@ -72,6 +70,16 @@ class BrowserUI(BaseInterface):
         # Add a signal handler
         self.builder.connect_signals(self)
         self.log.debug("Done")
+
+    def _setLogo(self):
+        '''
+            Set the logo.
+        '''
+        logo = self.builder.get_object("Logo")
+        logo_file = os.path.join(ConfigManager.getOverridesFolder(), "logo.png")
+        if not os.path.exists(logo_file):
+            logo_file = os.path.join(ICONS_FOLDER, "logo.png")
+        logo.set_from_pixbuf(Pixbuf.new_from_file(logo_file))
 
     def show(self):
         '''

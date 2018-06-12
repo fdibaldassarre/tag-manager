@@ -145,4 +145,7 @@ class _ConfigManager:
     def getProfileName(self):
         return os.path.basename(self.profile_folder)
 
+    def getOverridesFolder(self):
+        return os.path.join(self.profile_folder, "overrides/")
+
 ConfigManager = _ConfigManager()
