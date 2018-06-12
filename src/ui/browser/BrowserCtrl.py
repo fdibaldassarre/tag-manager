@@ -132,13 +132,16 @@ class BrowserCtrl(BaseController):
             :param dao.entities.IFileLazy file: File to remove
         '''
         # Remove the file from the system
+        self.log.info("Remove file: %s" % file.name)
         System.removeFile(file)
+        self.log.debug("Remove from controller files list")
         # Remove file from the list
         for cfile in self.files:
             if cfile.id == file.id:
                 self.files.remove(cfile)
                 break
         # Update tags and metatags
+        self.log.debug("Update available tags and metatags")
         self.available_tags = self._getAvailableTags(self.files)
         self.available_metatags = self._getAvailableMetatags(self.available_tags)
         self.trigger(UPDATE_FILES)

@@ -61,4 +61,9 @@ def removeFile(file):
     thumbnailer.removeThumbnail(file)
     path = os.path.join(ConfigManager.getRoot(), file.name)
     if os.path.exists(path):
-        os.remove(path)
+        if os.path.isdir(path):
+            # shutil.rmtree(path)
+            # Open folder to delete manually
+            openFile(path)
+        else:
+            os.remove(path)
