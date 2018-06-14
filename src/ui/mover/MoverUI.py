@@ -39,7 +39,7 @@ class MoverUI(BaseInterface):
         ui_file = os.path.join(GLADE_FOLDER, 'AddFile.glade')
         self.builder.add_from_file(ui_file)
         self.window = self.builder.get_object('Main')
-        self.window.resize(800, 100)
+        self.window.resize(400, 100)
         self.window.set_title("Move file to profile: %s" % ConfigManager.getProfileName())
         app = self.ctrl.services.getApplication()
         app.add_window(self.window)
@@ -64,8 +64,11 @@ class MoverUI(BaseInterface):
                 selector = self._buildComboBox(metatag)
             self.metatag_selectors[metatag] = selector
             # Add to UI
+            self._addToCustomSelectors(custom_box, metatag, selector)
+            '''
             box = self._buildSelectorBox(metatag, selector)
             custom_box.add(box)
+            '''
         custom_box.show_all()
         self.onSelectorValueChaged()
         # Build suggested tags
@@ -77,12 +80,18 @@ class MoverUI(BaseInterface):
         self.window.show()
 
     # Build helpers
+    '''
     def _buildSelectorBox(self, metatag, selector):
         label = Gtk.Label(metatag.name + ": ")
         box = Gtk.Box(Gtk.Orientation.HORIZONTAL, 10)
         box.add(label)
         box.add(selector)
         return box
+    '''
+    def _addToCustomSelectors(self, custom_grid, metatag, selector):
+        label = Gtk.Label(metatag.name + ": ")
+        custom_grid.add(label)
+        custom_grid.attach_next_to(selector, label, Gtk.PositionType.RIGHT, 1, 1)
 
     def _buildAutocompletion(self, metatag):
         '''

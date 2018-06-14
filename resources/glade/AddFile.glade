@@ -15,7 +15,7 @@
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <property name="orientation">vertical</property>
-        <property name="spacing">10</property>
+        <property name="spacing">5</property>
         <child>
           <object class="GtkBox">
             <property name="visible">True</property>
@@ -118,15 +118,12 @@
           </packing>
         </child>
         <child>
-          <object class="GtkBox" id="CustomSelectors">
+          <object class="GtkGrid" id="CustomSelectors">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
+            <property name="halign">center</property>
             <property name="orientation">vertical</property>
-            <property name="spacing">5</property>
-            <property name="homogeneous">True</property>
-            <child>
-              <placeholder/>
-            </child>
+            <property name="row_spacing">5</property>
             <child>
               <placeholder/>
             </child>
@@ -136,7 +133,7 @@
           </object>
           <packing>
             <property name="expand">False</property>
-            <property name="fill">True</property>
+            <property name="fill">False</property>
             <property name="position">2</property>
           </packing>
         </child>
@@ -148,10 +145,12 @@
             <property name="spacing">20</property>
             <child>
               <object class="GtkButton">
-                <property name="label" translatable="yes">Add</property>
+                <property name="label">gtk-ok</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
+                <property name="use_stock">True</property>
+                <property name="always_show_image">True</property>
                 <signal name="clicked" handler="onAdd" swapped="no"/>
               </object>
               <packing>
@@ -162,10 +161,12 @@
             </child>
             <child>
               <object class="GtkButton">
-                <property name="label" translatable="yes">Cancel</property>
+                <property name="label">gtk-cancel</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
+                <property name="use_stock">True</property>
+                <property name="always_show_image">True</property>
                 <signal name="clicked" handler="onCancel" swapped="no"/>
               </object>
               <packing>

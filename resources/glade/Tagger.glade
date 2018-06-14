@@ -193,10 +193,12 @@
             </child>
             <child>
               <object class="GtkButton" id="TFAddCategoryBtn">
-                <property name="label" translatable="yes">Add</property>
+                <property name="label">gtk-add</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
+                <property name="use_stock">True</property>
+                <property name="always_show_image">True</property>
                 <signal name="clicked" handler="onCreateMetatag" swapped="no"/>
               </object>
               <packing>
@@ -206,10 +208,12 @@
             </child>
             <child>
               <object class="GtkButton" id="TFAddTagBtn">
-                <property name="label" translatable="yes">Add</property>
+                <property name="label">gtk-add</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
+                <property name="use_stock">True</property>
+                <property name="always_show_image">True</property>
                 <signal name="clicked" handler="onCreateTag" swapped="no"/>
               </object>
               <packing>
@@ -239,10 +243,12 @@
         </child>
         <child>
           <object class="GtkButton" id="CloseBtn">
-            <property name="label" translatable="yes">Close</property>
+            <property name="label">gtk-close</property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
+            <property name="use_stock">True</property>
+            <property name="always_show_image">True</property>
             <signal name="clicked" handler="onCloseClicked" swapped="no"/>
           </object>
           <packing>
