@@ -25,10 +25,12 @@ class ServiceManager:
         return self.app
 
 class TagManagerApp(Gtk.Application):
+    app_id = "fdibaldassarre.tagmanager.browser"
+    name = "Tag Manager"
 
     def __init__(self):
-        super().__init__(application_id="fdibaldassarre.tagmanager")
-        Gdk.set_program_class("Tag Manager")
+        super().__init__(application_id=self.app_id)
+        Gdk.set_program_class(self.name)
         self.services = ServiceManager(self)
         self._loadControllers()
         self._loadCssProvider()
@@ -68,6 +70,8 @@ class TagManagerApp(Gtk.Application):
         #provider.load_from_path(css_file)
 
 class TaggerApp(TagManagerApp):
+    app_id = "fdibaldassarre.tagmanager.tag"
+    name = "Tag Manager - Tag"
 
     def __init__(self, file):
         super().__init__()
@@ -77,6 +81,8 @@ class TaggerApp(TagManagerApp):
         self.tagger.start()
 
 class MoverApp(TagManagerApp):
+    app_id = "fdibaldassarre.tagmanager.move"
+    name = "Tag Manager - Move"
 
     def __init__(self, path):
         '''
