@@ -45,6 +45,7 @@ class TaggerUI(BaseInterface):
         self.window.set_title("Tag: " + fname)
         # Register main window
         app = self.ctrl.services.getApplication()
+        self.window.set_icon_from_file(app.icon_path)
         app.add_window(self.window)
         # Setup ui variables
         self.tags_store = Gtk.ListStore(int, str, int)

@@ -8,10 +8,13 @@ gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
 from gi.repository import Gdk
 
+from src.Config import ConfigManager
+from src.Places import ICONS_FOLDER
+from src.Places import CSS_FOLDER
+
 from .browser.BrowserCtrl import BrowserCtrl
 from .tagger.TaggerCtrl import TaggerCtrl
 from .mover.MoverCtrl import MoverCtrl
-from src.Places import CSS_FOLDER
 
 class ServiceManager:
 
@@ -25,13 +28,20 @@ class TagManagerApp(Gtk.Application):
 
     def __init__(self):
         super().__init__(application_id="fdibaldassarre.tagmanager")
+        Gdk.set_program_class("Tag Manager")
         self.services = ServiceManager(self)
         self._loadControllers()
         self._loadCssProvider()
+        self._loadIcon()
         self.connect("activate", self.do_activate)
 
     def _loadControllers(self):
         self.browser = BrowserCtrl(self.services)
+
+    def _loadIcon(self):
+        self.icon_path = os.path.join(ConfigManager.getOverridesFolder(), "icon.png")
+        if not os.path.exists(self.icon_path):
+            self.icon_path = os.path.join(ICONS_FOLDER, "icon.png")
 
     def do_activate(self, data=None):
         self.browser.start()

@@ -85,6 +85,7 @@ class BrowserUI(BaseInterface):
         self.window.resize(1300, 800)
         # Register main window
         app = self.ctrl.services.getApplication()
+        self.window.set_icon_from_file(app.icon_path)
         app.add_window(self.window)
 
     def _initializeUIVariables(self):

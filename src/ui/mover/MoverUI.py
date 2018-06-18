@@ -41,7 +41,9 @@ class MoverUI(BaseInterface):
         self.window = self.builder.get_object('Main')
         self.window.resize(400, 100)
         self.window.set_title("Move file to profile: %s" % ConfigManager.getProfileName())
+        # Register window
         app = self.ctrl.services.getApplication()
+        self.window.set_icon_from_file(app.icon_path)
         app.add_window(self.window)
         # Build custom components
         self._buildCustom()
