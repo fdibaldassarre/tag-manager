@@ -87,6 +87,21 @@ class MoverCtrl(BaseController):
             return
         self.log.info("Ui closed, cleanup if necessary")
 
+    def getTargetFullPath(self, folder, fname):
+        '''
+            Get the full path for a file saved with the given name in
+            a folder in the root.
+
+            :param str folder: target folder
+            :param str fname: target name
+            :return: target path
+            :rtype: str
+        '''
+        target_base = os.path.join(folder, fname)
+        while target_base.startswith('/'):
+            target_base = target_base[1:]
+        return os.path.join(ConfigManager.getRoot(), target_base)
+
     def moveFileTo(self, folder, fname):
         '''
             Move the instance file to the given folder with
@@ -97,10 +112,7 @@ class MoverCtrl(BaseController):
             :return: target path
             :rtype: str
         '''
-        target_base = os.path.join(folder, fname)
-        while target_base.startswith('/'):
-            target_base = target_base[1:]
-        target = os.path.join(ConfigManager.getRoot(), target_base)
+        target = self.getTargetFullPath(folder, fname)
         self.log.info("Moving file from %s to %s" % (self.path, target))
         folder = os.path.dirname(target)
         if not os.path.isdir(folder):

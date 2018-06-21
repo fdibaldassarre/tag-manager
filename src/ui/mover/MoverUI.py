@@ -256,6 +256,7 @@ class MoverUI(BaseInterface):
             if DEFAULT_TARGET_NAME in self.ctrl.default_values:
                 name = self.ctrl.default_values[DEFAULT_TARGET_NAME]
         self.setDestinationName(name)
+        self.onTargetPathChanged()
 
     def _getFileTags(self):
         '''
@@ -271,6 +272,20 @@ class MoverUI(BaseInterface):
                 tags.append((name, metatag))
         # TODO: Get suggested tags values
         return tags
+
+    def _setAddEnabled(self, enable):
+        self.log.debug("Enable button: %r" % enable)
+        btn = self.builder.get_object('AddFileButton')
+        btn.set_sensitive(enable)
+
+    # Error message
+    def _showErrorMessage(self, msg):
+        label = self.builder.get_object('ErrorMessage')
+        label.set_text(msg)
+
+    def _hideErrorMessage(self):
+        label = self.builder.get_object('ErrorMessage')
+        label.set_text('')
 
     # Custom signals
     def onSelectorChanged(self, widget, metatag):
@@ -325,3 +340,16 @@ class MoverUI(BaseInterface):
 
     def onUpdateFilename(self, widget):
         self.onSelectorValueChaged()
+        self.onTargetPathChanged()
+
+    def onTargetPathChanged(self):
+        folder = self.getDestinationFolder()
+        name = self.getDestinationName()
+        path = self.ctrl.getTargetFullPath(folder, name)
+        self.log.debug("New path: %s" % path)
+        if not os.path.exists(path):
+            self._setAddEnabled(True)
+            self._hideErrorMessage()
+        else:
+            self._setAddEnabled(False)
+            self._showErrorMessage("Target path already exists")
