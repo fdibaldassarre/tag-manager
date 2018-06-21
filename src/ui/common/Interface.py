@@ -43,3 +43,18 @@ class BaseInterface:
         # destory dialog
         dialog.destroy()
         return True
+
+    def createMessageDialog(self, title, message):
+        # create dialog
+        dialog = Gtk.Dialog(title, self.window, 0,
+                (Gtk.STOCK_OK, Gtk.ResponseType.OK))
+        dialog.set_default_size(300, 100)
+        label = Gtk.Label(message)
+        box = dialog.get_content_area()
+        box.add(label)
+        # show and run
+        dialog.show_all()
+        response = dialog.run()
+        # destory dialog
+        dialog.destroy()
+        return True
