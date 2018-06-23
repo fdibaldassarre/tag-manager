@@ -404,11 +404,18 @@ class BrowserUI(BaseInterface):
         return True
 
     def onFilterByFileName(self, widget):
+        if ConfigManager.UI.getFastFilter():
+            self._onFilterByFileName(widget)
+
+    def onFilterByFileNameEnter(self, widget):
+        self._onFilterByFileName(widget)
+
+    def _onFilterByFileName(self, widget):
         name = widget.get_text()
         name = name.strip()
         if len(name) == 0:
             name = None
-        self.ctrl.addNameFilter()
+        self.ctrl.addNameFilter(name)
 
     def onFilterByTagName(self, widget):
         self.selected_tag_name = widget.get_text().lower()

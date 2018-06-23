@@ -34,6 +34,7 @@ class ChildConfig:
 
 UI_METATAG = "default-metatag"
 UI_RANDOMIZE = "randomize"
+UI_FAST_FILTER = "fast_filter"
 UI_MOVER_METATAGS = "mover-metatags"
 UI_MOVER_TARGET_FOLDER = "mover-target-folder"
 UI_MOVER_CUSTOM_PATTERN_KEYS = "mover-custom-keys"
@@ -50,6 +51,9 @@ class UISettings(ChildConfig):
 
     def getMoverMetatags(self):
         return self.getConfig(UI_MOVER_METATAGS)
+
+    def getFastFilter(self):
+        return self.getConfig(UI_FAST_FILTER)
 
     def getMoverTargetFolder(self):
         return self.getConfig(UI_MOVER_TARGET_FOLDER)
