@@ -50,6 +50,7 @@ class BrowserCtrl(BaseController):
         self.metatags = metatagsDao.getAll()
         self.tags = tagsDao.getAll()
         self.used_tags = []
+        self.name_filter = None
         self.files = self._getFiles(self.used_tags)
         self.available_tags = self._getAvailableTags(self.files)
         self.available_metatags = self._getAvailableMetatags(self.available_tags)
@@ -92,17 +93,35 @@ class BrowserCtrl(BaseController):
                 metatags[tag.metatag.id] = tag.metatag
         return sorted(list(metatags.values()), key=lambda m: m.name.lower())
 
-    def _getFiles(self, tags):
-        if len(tags) == 0:
+    def _getFiles(self, tags, name=None):
+        if len(tags) == 0 and name is None:
             if ConfigManager.UI.getRandomize():
                 return self._getRandomFiles()
             else:
                 return []
-        return filesDao.getByNameAndTags(tags=tags)
+        return filesDao.getByNameAndTags(name=name, tags=tags)
 
     def addTag(self, tag):
         self.used_tags.append(tag)
-        self.files = self._getFiles(self.used_tags)
+        self._searchFiles()
+
+    def removeTag(self, tag):
+        self.used_tags.remove(tag)
+        self._searchFiles()
+
+    def addNameFilter(self, name):
+        if name is None:
+            self.name_filter = None
+        else:
+            self.name_filter = '%'.join(name.strip().split())
+            if self.name_filter == '':
+                self.name_filter = None
+            else:
+                self.name_filter = '%' + self.name_filter +'%'
+        self._searchFiles()
+
+    def _searchFiles(self):
+        self.files = self._getFiles(self.used_tags, self.name_filter)
         self.available_tags = self._getAvailableTags(self.files)
         self.available_metatags = self._getAvailableMetatags(self.available_tags)
         # Trigger
@@ -111,16 +130,6 @@ class BrowserCtrl(BaseController):
         self.trigger(UPDATE_AVAILABLE_METATAGS)
         self.trigger(UPDATE_AVAILABLE_TAGS)
 
-    def removeTag(self, tag):
-        self.used_tags.remove(tag)
-        self.files = self._getFiles(self.used_tags)
-        self.available_tags = self._getAvailableTags(self.files)
-        self.available_metatags = self._getAvailableMetatags(self.available_tags)
-        # Trigger
-        self.trigger(UPDATE_USED_TAGS)
-        self.trigger(UPDATE_FILES)
-        self.trigger(UPDATE_AVAILABLE_METATAGS)
-        self.trigger(UPDATE_AVAILABLE_TAGS)
 
     def openTagger(self, file):
         tagger_ctrl = self.services.getApplication().openTagger(file)

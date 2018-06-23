@@ -403,9 +403,12 @@ class BrowserUI(BaseInterface):
         self.ctrl.removeTag(tag)
         return True
 
-    def onFilterByFileName(self, *args, **kwargs):
-        # TODO
-        pass
+    def onFilterByFileName(self, widget):
+        name = widget.get_text()
+        name = name.strip()
+        if len(name) == 0:
+            name = None
+        self.ctrl.addNameFilter()
 
     def onFilterByTagName(self, widget):
         self.selected_tag_name = widget.get_text().lower()

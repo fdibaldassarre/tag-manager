@@ -194,8 +194,10 @@
               </packing>
             </child>
             <child>
-              <object class="GtkSearchEntry" id="BrowserSearchName">
+              <object class="GtkSearchEntry" id="FilterNameSelector">
+                <property name="visible">True</property>
                 <property name="can_focus">True</property>
+                <property name="caps_lock_warning">False</property>
                 <property name="primary_icon_name">edit-find-symbolic</property>
                 <property name="primary_icon_activatable">False</property>
                 <property name="primary_icon_sensitive">False</property>
