@@ -6,6 +6,14 @@ from .Utils import json
 CONFIG_UI = "ui"
 CONFIG_SERVER = "server"
 
+class ConfigSetting:
+
+    def __init__(self, key, desc, default=None):
+        self.key = key
+        self.desc = desc
+        self.default = default
+
+
 class ChildConfig:
 
     symbol = None
@@ -17,28 +25,28 @@ class ChildConfig:
     def _sanityCheck(self):
         pass
 
-    def getConfig(self, key):
-        if key in self.config_manager.settings[self.symbol]:
-            return self.config_manager.settings[self.symbol][key]
+    def getConfig(self, setting):
+        if setting.key in self.config_manager.settings[self.symbol]:
+            return self.config_manager.settings[self.symbol][setting.key]
         else:
-            return None
+            return setting.default
 
-    def setConfig(self, key, newValue):
-        oldValue = self.getConfig(key)
+    def setConfig(self, setting, newValue):
+        oldValue = self.getConfig(setting)
         if newValue == oldValue:
             return
         # Set the new config
-        self.config_manager.settings[self.symbol][key] = newValue
+        self.config_manager.settings[self.symbol][setting.key] = newValue
         self.config_manager.save()
 
 
-UI_METATAG = "default-metatag"
-UI_RANDOMIZE = "randomize"
-UI_FAST_FILTER = "fast_filter"
-UI_MOVER_METATAGS = "mover-metatags"
-UI_MOVER_TARGET_FOLDER = "mover-target-folder"
-UI_MOVER_CUSTOM_PATTERN_KEYS = "mover-custom-keys"
-UI_MOVER_OPEN_ON_TAG = "mover-open-on-tag"
+UI_METATAG = ConfigSetting("default-metatag", "Set metatags automatically selected when the browser starts")
+UI_RANDOMIZE = ConfigSetting("randomize", "Show a set of random files when there are no search parameters set", False)
+UI_FAST_FILTER = ConfigSetting("fast_filter", "Enable search as you type for the name filter in the browser",False)
+UI_MOVER_METATAGS = ConfigSetting("mover-metatags", "List of metatags to add to the mover dialog")
+UI_MOVER_TARGET_FOLDER = ConfigSetting("mover-target-folder", "Pattern of the target folder in the mover")
+UI_MOVER_CUSTOM_PATTERN_KEYS = ConfigSetting("mover-custom-keys", "List of custom keys used in the target pattern")
+UI_MOVER_OPEN_ON_TAG = ConfigSetting("mover-open-on-tag", "Open the file after moving", False)
 
 class UISettings(ChildConfig):
     symbol = CONFIG_UI
@@ -71,16 +79,10 @@ class UISettings(ChildConfig):
         return self.getConfig(UI_MOVER_OPEN_ON_TAG)
 
 
-SERVER_PORT = "port"
+SERVER_PORT = ConfigSetting("port", "Port the API server listens on", 44659)
 
 class ServerSettings(ChildConfig):
     symbol = CONFIG_SERVER
-
-    def _sanityCheck(self):
-        port = self.getPort()
-        if port is None:
-            self.setPort(44659)
-            self.config_manager.save()
 
     def getPort(self):
         return self.getConfig(SERVER_PORT)
