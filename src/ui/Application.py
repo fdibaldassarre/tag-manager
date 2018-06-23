@@ -103,6 +103,18 @@ class MoverApp(BaseApp):
     def do_activate(self, data=None):
         self.mover.start()
 
+    def openTagger(self, file):
+        '''
+            Open the tagger for a file.
+
+            :param dao.entities.common.IFile file: File to tag
+            :return: Tagger controller
+            :rtype: ui.tagger.TaggerCtrl
+        '''
+        self.tagger = TaggerCtrl(self.services, file)
+        self.tagger.start()
+        return self.tagger
+
 
 class EditorApp(BaseApp):
     app_id = "fdibaldassarre.tagmanager.editor"
