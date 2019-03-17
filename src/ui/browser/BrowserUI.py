@@ -20,7 +20,7 @@ from .menu import FilesViewMenu
 
 ICON_SIZE = 256
 
-FILES_LIMIT = 100 #9
+FILES_LIMIT = 100
 
 PIXBUF_MISSING = Gtk.IconTheme.get_default().load_icon(Gtk.STOCK_MISSING_IMAGE, ICON_SIZE, 0)
 

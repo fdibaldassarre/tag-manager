@@ -14,6 +14,7 @@ from src import System
 
 from .BrowserUI import BrowserUI
 
+
 UPDATE_METATAGS = 0
 UPDATE_TAGS = 1
 UPDATE_FILES = 2
@@ -77,7 +78,7 @@ class BrowserCtrl(BaseController):
             # Get all the tags with at least one file tagged
             return tagsDao.getAllWithOneFileTagged()
         # Get the common tags
-        common_tags = tagsDao.getCommonTags(files)
+        common_tags = tagsDao.getRelatedTags(self.used_tags)
         # Remove the used tags
         available_tags = []
         used_ids = list(map(lambda t: t.id, self.used_tags))

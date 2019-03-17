@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+from sqlalchemy.orm import aliased
 from sqlalchemy.orm import joinedload
 
 from .Common import EntityDAO
@@ -8,10 +9,12 @@ from .Common import returnNonPersistent
 
 from .entities.Persistent import File
 from .entities.Persistent import Tag
+from .entities.Persistent import file_tags
 from .entities.Common import ITag
 from .entities.Common import ITagLazy
 from .entities.Common import IMetatag
 from .entities.Common import IMetatagLazy
+
 
 class TagsDAO(EntityDAO):
 
@@ -73,7 +76,9 @@ class TagsDAO(EntityDAO):
         '''
             Find all the tags in common among the given files.
 
-            :param list: List of ITag
+            @Deprecated
+
+            :param files: List of IFile
             :return: List of tags
             :rtype: list of ITag
         '''
@@ -82,5 +87,32 @@ class TagsDAO(EntityDAO):
         query = self._session.query(Tag).outerjoin(Tag.files).filter(File.id.in_(files_codes))
         query = query.options(self._options)
         return query.all()
+
+    @withSession
+    @returnNonPersistent
+    def getRelatedTags(self, tags):
+        '''
+            Find all the tags related with any of the given tags.
+            A tag is related to another if there is at least one file with
+            both tags.
+
+            :param tags: List of ITag
+            :return: List of tags
+            :rtype: list of ITag
+        '''
+        tag_codes = list(map(lambda t: t.id, tags))
+        query = self._session.query(Tag).distinct()\
+            .join(file_tags, Tag.id == file_tags.c.Tag)
+        file_tag_aliases = {}
+        for tag_code in tag_codes:
+            alias = aliased(file_tags, name="TagFiles_%d" % tag_code)
+            query = query.join(alias, file_tags.c.File == alias.c.File)
+            file_tag_aliases[tag_code] = alias
+        # Filter
+        for tag_code, alias in file_tag_aliases.items():
+            query = query.filter(alias.c.Tag == tag_code)
+        query = query.options(self._options)
+        return query.all()
+
 
 tagsDao = TagsDAO()
