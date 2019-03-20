@@ -4,21 +4,33 @@ A tag manager application written in GTK.
 ## Requirements
 - Python 3
 - Gtk 3
-- Python-SQLAlchemy
 - xdg-utils
-- Python-Flask (only for the webserver)
+
+```sh
+apt install xdg-utils python3-gi gir1.2-gtk-3.0
+```
+
+## Python packages
+- python-magic
+- sqlalchemy
+- flask_restful (only for the webserver)
+- marshmallow (only for the webserver)
+
+```sh
+pip3 install flask_restful marshmallow python-magic sqlalchemy
+```
 
 ## Usage
 
 To start the browser use
 ```sh
 ./browser.py
-``` 
+```
 
 To tag a file use:
 ```sh
 ./tag-file.py path/to/file
-``` 
+```
 
 ## REST API
 
@@ -26,7 +38,7 @@ The application includes a server with a REST API.
 Start the server with
 ```sh
 ./server.py
-``` 
+```
 
 ## REST Documentation
 
