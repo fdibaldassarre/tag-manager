@@ -90,17 +90,16 @@ class TagsDAO(EntityDAO):
 
     @withSession
     @returnNonPersistent
-    def getRelatedTags(self, tags):
+    def getRelatedTags(self, tag_codes):
         '''
             Find all the tags related with any of the given tags.
             A tag is related to another if there is at least one file with
             both tags.
 
-            :param tags: List of ITag
+            :param tags: List of tag codes
             :return: List of tags
             :rtype: list of ITag
         '''
-        tag_codes = list(map(lambda t: t.id, tags))
         query = self._session.query(Tag).distinct()\
             .join(file_tags, Tag.id == file_tags.c.Tag)
         file_tag_aliases = {}

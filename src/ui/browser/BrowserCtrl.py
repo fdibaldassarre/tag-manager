@@ -78,12 +78,12 @@ class BrowserCtrl(BaseController):
             # Get all the tags with at least one file tagged
             return tagsDao.getAllWithOneFileTagged()
         # Get the common tags
-        common_tags = tagsDao.getRelatedTags(self.used_tags)
+        used_ids = list(map(lambda t: t.id, self.used_tags))
+        common_tags = tagsDao.getRelatedTags(used_ids)
         # Remove the used tags
         available_tags = []
-        used_ids = list(map(lambda t: t.id, self.used_tags))
         for tag in common_tags:
-            if not tag.id in used_ids:
+            if tag.id not in used_ids:
                 available_tags.append(tag)
         return available_tags
 
