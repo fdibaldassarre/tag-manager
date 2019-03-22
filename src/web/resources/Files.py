@@ -25,6 +25,9 @@ class Files(BaseResource):
             :return: List of resources
         '''
         limit = request.args.get('limit')
+        random = request.args.get('random')
+        if random is not None:
+            return self.dao.getRandom(limit)
         offset = request.args.get('offset')
         name = request.args.get('name')
         name_like = None
