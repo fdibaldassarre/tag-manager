@@ -10,6 +10,8 @@ from src.web.Errors import BaseError
 
 from .Common import BaseResource
 
+USE_FAST_SCAN = True  # Use scandir instead of listdir for better performance
+# Note: Fast Scan may fail if the data is on another drive
 
 class FileList(BaseResource):
 
@@ -38,6 +40,15 @@ class FileList(BaseResource):
         path = os.path.join(ConfigManager.getRoot(), fname)
         if not os.path.exists(path):
             return []
+        if USE_FAST_SCAN:
+            file_list = self._scanDir(path, fname)
+        else:
+            file_list = self._listDir(path, fname)
+        file_list.sort(key=lambda s: s.name)
+        return file_list
+
+    def _scanDir(self, path, fname):
+        file_list = []
         with os.scandir(path) as it:
             for entry in it:
                 if entry.is_file():
@@ -45,7 +56,16 @@ class FileList(BaseResource):
                     relpath = os.path.join(fname, name)
                     sysfile = SystemFile(relpath, name)
                     file_list.append(sysfile)
-        file_list.sort(key=lambda s: s.name)
+        return file_list
+
+    def _listDir(self, path, fname):
+        file_list = []
+        for name in os.listdir(path):
+            fullpath = os.path.join(path, name)
+            if not os.path.isdir(fullpath):
+                relpath = os.path.join(fname, name)
+                sysfile = SystemFile(relpath, name)
+                file_list.append(sysfile)
         return file_list
 
     def put(self, fid):
