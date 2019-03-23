@@ -24,8 +24,8 @@ class Tags(BaseResource):
 
             :return: List of resources
         '''
-        related = request.args.get('related')
-        if related is None:
+        related = request.args.getlist('related')
+        if len(related) == 0:
             return self.dao.getAll()
-        tag_codes = list(map(lambda c: int(c), related.split(',')))
+        tag_codes = list(map(lambda c: int(c), related))
         return self.dao.getRelatedTags(tag_codes)

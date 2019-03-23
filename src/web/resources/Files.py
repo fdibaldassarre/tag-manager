@@ -34,4 +34,5 @@ class Files(BaseResource):
         if name is not None:
             name_like = '%' + name.replace(' ', '%') + '%'
         tags = request.args.getlist('tags')
-        return self.dao.getByNameAndTags(name_like, tags, offset=offset, limit=limit)
+        tag_codes = list(map(lambda c: int(c), tags))
+        return self.dao.getByNameAndTags(name_like, tag_codes, offset=offset, limit=limit)
