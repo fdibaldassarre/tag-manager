@@ -55,3 +55,10 @@ class IMetatag(IMetatagLazy):
         self.tags = []
         for ptag in persistent_entity.tags:
             self.tags.append(Named(ptag))
+
+# System File
+class SystemFile():
+
+    def __init__(self, src, name):
+        self.src = src
+        self.name = name

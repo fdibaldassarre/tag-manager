@@ -24,6 +24,7 @@ from src.web.resources import Files
 from src.web.resources import Tags
 from src.web.resources import Metatags
 from src.web.resources import FileTags
+from src.web.resources import FileList
 
 from src.Application import API_VERSION
 
@@ -45,4 +46,6 @@ api.add_resource(Metatags,
 api.add_resource(FileTags,
                  API_PREFIX + '/files/<int:fid>/tags',
                  API_PREFIX + '/files/<int:fid>/tags/<int:tid>',)
+api.add_resource(FileList,
+                 API_PREFIX + '/files/<int:fid>/list',)
 app.run(host='0.0.0.0', port=PORT, debug=ConfigManager.debug)

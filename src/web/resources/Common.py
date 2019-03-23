@@ -140,7 +140,7 @@ class BaseResource(CommonResource):
 
             :return: The updated entity
         '''
-        raise NotImplemented
+        raise NotImplementedError()
 
     def deleteEntityPre(self, eid):
         '''

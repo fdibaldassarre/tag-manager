@@ -33,3 +33,7 @@ class BasicErrorSchema(Schema):
 
 class ErrorSchema(Schema):
     error = fields.Nested(BasicErrorSchema)
+
+class SystemFileSchema(Schema):
+    name = fields.Str()
+    src = fields.Str()

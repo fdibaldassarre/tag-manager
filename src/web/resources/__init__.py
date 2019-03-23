@@ -4,3 +4,4 @@ from .Files import Files
 from .Tags import Tags
 from .Metatags import Metatags
 from .FileTags import FileTags
+from .FileList import FileList
