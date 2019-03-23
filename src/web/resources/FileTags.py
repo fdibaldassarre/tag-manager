@@ -17,10 +17,10 @@ class FileTags(BaseResource):
     file_schema = FileSchema()
 
     def get(self, *args, **kwargs):
-        raise NotImplemented
+        raise NotImplementedError()
 
     def put(self, *args, **kwargs):
-        raise NotImplemented
+        raise NotImplementedError()
 
     def post(self, fid):
         json_data = request.get_json()
