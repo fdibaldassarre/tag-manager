@@ -41,7 +41,8 @@ class FileList(BaseResource):
             for name in files:
                 fullpath = os.path.join(root, name)
                 relpath = os.path.relpath(fullpath, start=ConfigManager.getRoot())
-                sysfile = SystemFile(relpath, name)
+                rname = os.path.relpath(fullpath, start=path)
+                sysfile = SystemFile(relpath, rname)
                 file_list.append(sysfile)
         file_list.sort(key=lambda s: s.name)
         return file_list
