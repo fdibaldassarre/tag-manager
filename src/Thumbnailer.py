@@ -50,7 +50,7 @@ class Thumbnailer():
             return None
         elif not os.path.exists(fail_path):
             self.createThumbnail(path, thumb_path, thumb_type)
-            return path
+            return thumb_path
         else:
             return None
 
