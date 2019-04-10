@@ -7,9 +7,7 @@ try:
   from natsort import natsorted
 except ImportError:
   def natsorted(data, f):
-    it = list(data)
-    it.sort()
-    return it
+    return sorted(data, key=f)
 
 from src.Config import ConfigManager
 from src.Utils import guessMime
@@ -95,7 +93,6 @@ class Thumbnailer():
         return None
 
     def createThumbnail(self, path, thumb_file, thumb_type):
-        print(path)
         thumb_folder = os.path.dirname(thumb_file)
         if not os.path.isdir(thumb_folder):
             os.makedirs(thumb_folder)
