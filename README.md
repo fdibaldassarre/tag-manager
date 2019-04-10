@@ -13,6 +13,7 @@ apt install xdg-utils python3-gi gir1.2-gtk-3.0
 ## Python packages
 - python-magic
 - sqlalchemy
+- natsort
 - flask_restful (only for the webserver)
 - marshmallow (only for the webserver)
 
