@@ -74,12 +74,16 @@ class BrowserCtrl(BaseController):
             :return: list of tags
             :rtype: list of dao.entities.Common.ITag
         '''
-        if len(self.used_tags) == 0 or len(files) == 0:
+        if len(self.used_tags) == 0 and not self.name_filter:
             # Get all the tags with at least one file tagged
             return tagsDao.getAllWithOneFileTagged()
         # Get the common tags
         used_ids = list(map(lambda t: t.id, self.used_tags))
-        common_tags = tagsDao.getRelatedTags(used_ids)
+        if self.name_filter is not None:
+            name_like = "%" + self.name_filter + "%"
+            common_tags = tagsDao.getRelatedTags(used_ids, name_like=name_like)
+        else:
+            common_tags = tagsDao.getRelatedTags(used_ids)
         # Remove the used tags
         available_tags = []
         for tag in common_tags:

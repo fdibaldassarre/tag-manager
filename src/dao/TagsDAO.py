@@ -90,13 +90,14 @@ class TagsDAO(EntityDAO):
 
     @withSession
     @returnNonPersistent
-    def getRelatedTags(self, tag_codes):
+    def getRelatedTags(self, tag_codes, name_like=None):
         '''
             Find all the tags related with any of the given tags.
             A tag is related to another if there is at least one file with
             both tags.
 
             :param tags: List of tag codes
+            :param name_like: Part of a file name
             :return: List of tags
             :rtype: list of ITag
         '''
@@ -107,9 +108,16 @@ class TagsDAO(EntityDAO):
             alias = aliased(file_tags, name="TagFiles_%d" % tag_code)
             query = query.join(alias, file_tags.c.File == alias.c.File)
             file_tag_aliases[tag_code] = alias
+        if name_like:
+            file_alias = aliased(File, name="FileLike")
+            query = query.join(file_alias, file_tags.c.File == file_alias.id)
+        else:
+            file_alias = None
         # Filter
         for tag_code, alias in file_tag_aliases.items():
             query = query.filter(alias.c.Tag == tag_code)
+        if file_alias is not None:
+            query = query.filter(file_alias.name.like(name_like))
         query = query.options(self._options)
         return query.all()
 
