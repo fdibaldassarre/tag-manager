@@ -152,7 +152,8 @@ class TaggerUI(BaseInterface):
             Update the tags list.
         '''
         self.tags_store.clear()
-        for tag in self.ctrl.tags:
+        sorted_tags = sorted(self.ctrl.tags, key=lambda tag: tag.name.lower())
+        for tag in sorted_tags:
             self.tags_store.append([tag.id, tag.name, tag.metatag.id])
 
     def updateTagsGrids(self):
