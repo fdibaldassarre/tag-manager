@@ -29,7 +29,8 @@ class FileList(BaseResource):
         if file.mime != 'inode/directory':
             error = BaseError(100, "File is not a folder")
             return self.marshal(error, self.schema_error), 400
-        file_list = self.getFilesContained(file.name)
+        path = os.path.join(file.relpath, file.name)
+        file_list = self.getFilesContained(path)
         return self.marshal(file_list, self.file_schema)
 
     def getFilesContained(self, fname):
