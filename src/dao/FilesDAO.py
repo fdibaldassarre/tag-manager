@@ -21,8 +21,8 @@ class FilesDAO(EntityDAO):
     _entity_lazy = IFileLazy
     _persistent_entity = File
 
-    def insert(self, name=None, mime=None):
-        return super().insert(name=name, mime=mime)
+    def insert(self, name=None, relpath=None, mime=None):
+        return super().insert(name=name, relpath=relpath, mime=mime)
 
     @withSession
     @returnNonPersistentFull
@@ -77,11 +77,11 @@ class FilesDAO(EntityDAO):
             for tag in tags:
                 ptag = Tag(id=self._getTagId(tag)) # self._session.query(Tag).filter_by(id=tag.id).one()
                 query = query.filter(File.tags.contains(ptag))
+        query = query.order_by(File.name)
         if offset is not None:
             query = query.offset(offset)
         if limit is not None:
             query = query.limit(limit)
-        query = query.order_by(File.name)
         return query.all()
 
     def _getTagId(self, tag):

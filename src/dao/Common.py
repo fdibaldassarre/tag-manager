@@ -138,20 +138,20 @@ class EntityDAO(SessionDAO):
 
     @withSession
     @returnNonPersistentFull
-    def getByName(self, name):
+    def getByName(self, relpath, name):
         '''
             Get an entity by name.
 
+            :param str relpath: Path relative to the root
             :param str name: Name of the entity
             :return: Entity or None
             :rtype: entities.Common
         '''
-        entities = self._getBy(filters={'name': name})
+        entities = self._getBy(filters={'name': name, 'relpath': relpath})
         if len(entities) == 0:
             return None
         else:
             return entities[0]
-
 
     @withSession
     @returnNonPersistent
