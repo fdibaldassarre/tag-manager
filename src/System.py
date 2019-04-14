@@ -30,11 +30,14 @@ def getRootRelativePath(path):
         Get the path relative to the profile root.
 
         :param str path: path
-        :return: path relative to the root
-        :rtype: str
+        :return: path relative to the root and file name
+        :rtype: str, str
     '''
     abspath = os.path.abspath(path)
-    return os.path.relpath(abspath, ConfigManager.getRoot())
+    name = os.path.basename(abspath)
+    folder = os.path.dirname(abspath)
+    relpath = os.path.relpath(folder, ConfigManager.getRoot())
+    return relpath, name
 
 def addFile(path):
     '''
@@ -42,11 +45,11 @@ def addFile(path):
 
         :param str path: Path of the file to add
     '''
-    name = os.path.relpath(path, ConfigManager.getRoot())
+    relpath, name = getRootRelativePath(path)
     # Get mime
     mime = guessMime(path)
     # Add to db
-    file = filesDao.insert(name=name, mime=mime)
+    file = filesDao.insert(name=name, relpath=relpath, mime=mime)
     # Create thumbnail
     thumbnailer.getThumbnail(file)
     return file

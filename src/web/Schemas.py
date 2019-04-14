@@ -15,6 +15,7 @@ class TagLazySchema(NamedSchema):
     metatag = fields.Nested(MetatagLazySchema)
 
 class FileLazySchema(NamedSchema):
+    relpath = fields.Str()
     mime = fields.Str()
 
 # Full schema

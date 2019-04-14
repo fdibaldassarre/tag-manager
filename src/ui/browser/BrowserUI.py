@@ -193,8 +193,8 @@ class BrowserUI(BaseInterface):
         for i in range(len(self.files_store), max_index):
             file = self.ctrl.files[i]
             pixbuf = self._getFilePixbuf(file)
-            name = os.path.basename(file.name)
-            self.files_store.append([file.id, name, pixbuf, file.name])
+            relpath = os.path.join(file.relpath, file.name)
+            self.files_store.append([file.id, file.name, pixbuf, relpath])
         files_view = self.builder.get_object('FilesView')
         files_view.show_all()
         # Show/hide the load more files button
@@ -360,7 +360,7 @@ class BrowserUI(BaseInterface):
         file = self._getFilesViewSelected()
         if file is None:
             return
-        folder = os.path.dirname(file.name)
+        folder = os.path.join(file.relpath, file.name)
         self.log.info("Opening folder: %s" % folder)
         openFile(folder)
 

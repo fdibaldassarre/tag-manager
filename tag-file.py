@@ -24,10 +24,10 @@ from src.System import getRootRelativePath
 from src.ui.Application import TaggerApp
 
 filepath = args.file
-name = getRootRelativePath(filepath)
+relpath, name = getRootRelativePath(filepath)
 # name = os.path.relpath(filepath, ConfigManager.getRoot())
 
-file = filesDao.getByName(name)
+file = filesDao.getByName(relpath, name)
 if file is None:
     file = addFile(filepath)
 
