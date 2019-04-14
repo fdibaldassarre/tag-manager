@@ -38,7 +38,8 @@ class Thumbnailer():
             :return: path of the thumbnail
             :rtype: str
         '''
-        path = os.path.join(ConfigManager.getRoot(), tfile.name)
+        relpath = os.path.join(tfile.relpath, tfile.name)
+        path = os.path.join(ConfigManager.getRoot(), relpath)
         if not os.path.exists(path):
             return None
         thumb_path = self._getThumbnailPath(tfile)
