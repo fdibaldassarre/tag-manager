@@ -11,6 +11,7 @@ class IFileLazy(Named):
 
     def __init__(self, persistent_entity):
         super().__init__(persistent_entity)
+        self.relpath = persistent_entity.relpath
         self.mime = persistent_entity.mime
 
 class IFile(IFileLazy):

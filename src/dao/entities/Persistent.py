@@ -21,10 +21,11 @@ file_tags = Table('FileTags', Base.metadata,
 # Entities
 class File(Base):
     __tablename__ = "Files"
-    __table_args__ = (UniqueConstraint('name', name='_file_name_uc'),
+    __table_args__ = (UniqueConstraint('relpath', 'name', name='_file_name_uc'),
                      )
     id = Column(Integer, primary_key=True)
     name = Column(String, nullable=False, index=True)
+    relpath = Column(String, nullable=False, index=True)
     mime = Column(String, nullable=False)
 
     tags = relationship('Tag',
