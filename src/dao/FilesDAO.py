@@ -26,7 +26,12 @@ class FilesDAO(EntityDAO):
 
     @withSession
     @returnNonPersistentFull
-    def getByName(self, relpath, name):
+    def getByName(self, name):
+        return self._getBy(filters={'name': name})
+
+    @withSession
+    @returnNonPersistentFull
+    def getByPath(self, relpath, name):
         '''
             Get a file by relpath and name.
 

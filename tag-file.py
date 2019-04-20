@@ -27,7 +27,7 @@ filepath = args.file
 relpath, name = getRootRelativePath(filepath)
 # name = os.path.relpath(filepath, ConfigManager.getRoot())
 
-file = filesDao.getByName(relpath, name)
+file = filesDao.getByPath(relpath, name)
 if file is None:
     file = addFile(filepath)
 
