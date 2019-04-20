@@ -148,7 +148,8 @@ class MoverCtrl(BaseController):
         filesDao.closeSession(commit=True)
         # Open file
         if ConfigManager.UI.getMoverOpenOnTag():
-            openFile(file.name)
+            folder = os.path.join(file.relpath, file.name)
+            openFile(folder)
         self.services.getApplication().openTagger(file)
         return file
 
