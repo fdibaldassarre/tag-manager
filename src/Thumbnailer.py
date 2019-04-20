@@ -4,10 +4,10 @@ import os
 from subprocess import Popen
 
 try:
-  from natsort import natsorted
+    from natsort import natsorted
 except ImportError:
-  def natsorted(data, f):
-    return sorted(data, key=f)
+    def natsorted(data, f):
+        return sorted(data, key=f)
 
 from src.Config import ConfigManager
 from src.Utils import guessMime
@@ -22,6 +22,7 @@ THUMB_IMAGE = 1
 THUMB_FOLDER = 2
 
 THUMB_EXTENSION = '.png'
+
 
 class Thumbnailer():
 
@@ -54,6 +55,42 @@ class Thumbnailer():
             return thumb_path
         else:
             return None
+
+    def recreateThumbnail(self, tfile):
+        '''
+            Recreate the thumbnail for a file.
+
+            :param dao.entities.IFileLazy file: File
+            :return: The path of the thumbnail created, None in case of errors
+            :rtype: str
+        '''
+        relpath = os.path.join(tfile.relpath, tfile.name)
+        path = os.path.join(ConfigManager.getRoot(), relpath)
+        if not os.path.exists(path):
+            return None
+        thumb_path = self._getThumbnailPath(tfile)
+        thumb_type = self.getThumbnailType(path)
+        self.createThumbnail(path, thumb_path, thumb_type)
+        return thumb_path
+
+    def createThumbnailFrom(self, tfile, path):
+        '''
+            Create the thumbnail of a file using a specific file.
+            If the file already has a thumbnail it will be overwritten.
+
+            :param dao.entities.IFileLazy file: File
+            :param str path: Path of the file to use to create the thumbnail
+            :return: The path of the thumbnail created, None in case of errors
+            :rtype: str
+        '''
+        if not os.path.exists(path):
+            return None
+        thumb_type = self.getThumbnailType(path)
+        if thumb_type is None:
+            return None
+        thumb_path = self._getThumbnailPath(tfile)
+        self.createThumbnail(path, thumb_path, thumb_type)
+        return thumb_path
 
     def _getThumbnailPath(self, tfile):
         '''
