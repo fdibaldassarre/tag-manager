@@ -154,7 +154,8 @@ class TaggerUI(BaseInterface):
         self.tags_store.clear()
         sorted_tags = sorted(self.ctrl.tags, key=lambda tag: tag.name.lower())
         for tag in sorted_tags:
-            self.tags_store.append([tag.id, tag.name, tag.metatag.id])
+            if self.ctrl.isTagInAutocomplete(tag):
+                self.tags_store.append([tag.id, tag.name, tag.metatag.id])
 
     def updateTagsGrids(self):
         '''

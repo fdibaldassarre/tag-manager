@@ -47,6 +47,7 @@ UI_MOVER_METATAGS = ConfigSetting("mover-metatags", "List of metatags to add to 
 UI_MOVER_TARGET_FOLDER = ConfigSetting("mover-target-folder", "Pattern of the target folder in the mover")
 UI_MOVER_CUSTOM_PATTERN_KEYS = ConfigSetting("mover-custom-keys", "List of custom keys used in the target pattern")
 UI_MOVER_OPEN_ON_TAG = ConfigSetting("mover-open-on-tag", "Open the file after moving", False)
+UI_TAGGER_AUTCOMPLETE_METATAGS = ConfigSetting("tagger-allowed-cetegories", "List of categories used in the autocomplete")
 
 class UISettings(ChildConfig):
     symbol = CONFIG_UI
@@ -77,6 +78,9 @@ class UISettings(ChildConfig):
 
     def getMoverOpenOnTag(self):
         return self.getConfig(UI_MOVER_OPEN_ON_TAG)
+
+    def getTaggerAutocompleteMetatags(self):
+        return self.getConfig(UI_TAGGER_AUTCOMPLETE_METATAGS)
 
 
 SERVER_PORT = ConfigSetting("port", "Port the API server listens on", 44659)

@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+from src.Config import ConfigManager
 from src.Logging import createLogger
 from .TaggerUI import TaggerUI
 
@@ -20,12 +21,24 @@ class TaggerCtrl(BaseController):
 
     def __init__(self, services, file):
         super().__init__(services)
+        self.loadConfiguration()
         self.ui = TaggerUI(self)
         self.file = file
         # Ensure tags are defined
         if not hasattr(self.file, 'tags'):
             self.file = filesDao.getById(self.file.id)
         self.log.debug("Initialized")
+
+    def loadConfiguration(self):
+        self.autocomplete_metatags = ConfigManager.UI.getTaggerAutocompleteMetatags()
+
+    def isTagInAutocomplete(self, tag):
+        if self.autocomplete_metatags is None:
+            return True
+        if tag.metatag.name in self.autocomplete_metatags:
+            return True
+        else:
+            return False
 
     def setupUpdateEvents(self):
         super().setupUpdateEvents()
