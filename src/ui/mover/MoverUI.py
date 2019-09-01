@@ -22,7 +22,8 @@ SELECTOR_FREETEXT = "FreeText"
 DEFAULT_TARGET_NAME = "name"
 DEFAULT_METATAGS = "metatags"
 
-DEFAULT_WINDOW_SIZE = (600, 100)
+WINDOW_WIDTH = 600
+WINDOW_HEIGHT = 100
 
 class MoverUI(BaseInterface):
 
@@ -44,7 +45,7 @@ class MoverUI(BaseInterface):
         ui_file = os.path.join(GLADE_FOLDER, 'AddFile.glade')
         self.builder.add_from_file(ui_file)
         self.window = self.builder.get_object('Main')
-        self.window.resize(*DEFAULT_WINDOW_SIZE)
+        self.window.resize(WINDOW_WIDTH, WINDOW_HEIGHT)
         self.window.set_title("Move file to profile: %s" % ConfigManager.getProfileName())
         # Register window
         app = self.ctrl.services.getApplication()
@@ -103,6 +104,8 @@ class MoverUI(BaseInterface):
 
     def _addEntryToCustomSelectors(self, custom_grid, entry_name, selector):
         label = Gtk.Label(entry_name + ": ")
+        label.set_halign(Gtk.Align.START)
+        label.set_valign(Gtk.Align.FILL)
         custom_grid.add(label)
         custom_grid.attach_next_to(selector, label, Gtk.PositionType.RIGHT, 1, 1)
 
