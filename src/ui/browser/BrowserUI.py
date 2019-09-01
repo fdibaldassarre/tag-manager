@@ -360,7 +360,7 @@ class BrowserUI(BaseInterface):
         file = self._getFilesViewSelected()
         if file is None:
             return
-        folder = os.path.join(file.relpath, file.name)
+        folder = os.path.dirname(os.path.join(file.relpath, file.name))
         self.log.info("Opening folder: %s" % folder)
         openFile(folder)
 
