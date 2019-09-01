@@ -25,6 +25,8 @@ DEFAULT_METATAGS = "metatags"
 WINDOW_WIDTH = 600
 WINDOW_HEIGHT = 100
 
+ENTRIES_WIDTH_CHARS = 30
+
 class MoverUI(BaseInterface):
 
     log = createLogger(__name__)
@@ -104,9 +106,11 @@ class MoverUI(BaseInterface):
 
     def _addEntryToCustomSelectors(self, custom_grid, entry_name, selector):
         label = Gtk.Label(entry_name + ": ")
-        label.set_halign(Gtk.Align.START)
+        label.set_halign(Gtk.Align.END)
         label.set_valign(Gtk.Align.FILL)
         custom_grid.add(label)
+        selector.set_halign(Gtk.Align.START)
+        selector.set_valign(Gtk.Align.FILL)
         custom_grid.attach_next_to(selector, label, Gtk.PositionType.RIGHT, 1, 1)
 
     def _buildAutocompletion(self, metatag):
@@ -133,6 +137,7 @@ class MoverUI(BaseInterface):
         # Create entry with completion
         entry = Gtk.SearchEntry()
         entry.set_completion(completion)
+        entry.set_width_chars(ENTRIES_WIDTH_CHARS)
         # Set default value
         value = self._getMetatagDefaultValue(metatag)
         if value is not None:
@@ -170,6 +175,7 @@ class MoverUI(BaseInterface):
         default_value = entry["default-value"]
         selector = Gtk.Entry()
         selector.set_text(default_value)
+        selector.set_width_chars(ENTRIES_WIDTH_CHARS)
         selector.connect("changed", self.onCustomSelectorChanged, name)
         return selector
 
