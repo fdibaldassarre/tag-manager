@@ -171,8 +171,6 @@ class EditorUI(BaseInterface):
     def onEditTag(self, widget):
         tag_widget = self.builder.get_object("EditTagSelect")
         tag = self._getSelectedTag(tag_widget)
-        if tag is None:
-            return
         new_name = self._getWidgetText("EditTagName")
         new_metatag = self._getSelectorElement("EditTagMetatagSelect", self.ctrl.metatags)
         if tag is None or len(new_name) == 0 or new_metatag is None:
