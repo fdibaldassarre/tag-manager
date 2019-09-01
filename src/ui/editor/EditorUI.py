@@ -25,6 +25,7 @@ class EditorUI(BaseInterface):
         self.builder = Gtk.Builder()
         ui_file = os.path.join(GLADE_FOLDER, 'Editor.glade')
         self.builder.add_from_file(ui_file)
+        self._buildTagsAutocompleteBox()
         self.window = self.builder.get_object('Main')
         self.window.resize(400, 100)
         # Register window
@@ -35,6 +36,32 @@ class EditorUI(BaseInterface):
         self.ctrl.onUpdateTags(self.onUpdateTags)
         # Connect signals
         self.builder.connect_signals(self)
+
+    def _buildTagsAutocompleteBox(self):
+        self.tags_store = Gtk.ListStore(int, str, int)
+        edit_entry = self.builder.get_object("EditTagSelect")
+        self._buildAutocompletionBox(edit_entry, self.onTagChanged)
+        delete_entry = self.builder.get_object("DeleteTagSelect")
+        self._buildAutocompletionBox(delete_entry)
+
+    def _buildAutocompletionBox(self, search_entry, on_match_selected=None):
+        '''
+            Set the autocompletion behaviour.
+        '''
+        completion = Gtk.EntryCompletion.new()
+        # Set model
+        completion.set_model(self.tags_store)
+        completion.set_text_column(1)
+        # Settings
+        completion.set_inline_completion(False)
+        completion.set_popup_completion(True)
+        completion.set_popup_set_width(True)
+        completion.set_popup_single_match(True)
+        completion.set_inline_selection(True)
+        if on_match_selected is not None:
+            completion.connect("match-selected", on_match_selected)
+        # Add to entry
+        search_entry.set_completion(completion)
 
     def show(self):
         if self.window is None:
@@ -53,11 +80,6 @@ class EditorUI(BaseInterface):
         for metatag in self.ctrl.metatags:
             selector.append_text(metatag.name)
 
-    def _updateTagSelector(self, selector):
-        selector.remove_all()
-        for tag in self.ctrl.tags:
-            selector.append_text(tag.name)
-
     def onUpdateMetatags(self):
         selector_ids = ["AddTagMetatagSelect", "EditTagMetatagSelect", "EditMetatagSelect", "DeleteMetatagSelect"]
         for sid in selector_ids:
@@ -65,10 +87,24 @@ class EditorUI(BaseInterface):
             self._updateMetatagSelector(selector)
 
     def onUpdateTags(self):
-        selector_ids = ["EditTagSelect", "DeleteTagSelect"]
-        for sid in selector_ids:
-            selector = self.builder.get_object(sid)
-            self._updateTagSelector(selector)
+        self.tags_store.clear()
+        tags_store = [[index, tag, tag.name.lower()] for index, tag in enumerate(self.ctrl.tags)]
+        sorted_tags = sorted(tags_store, key=lambda element: element[2])
+        for position, tag, _ in sorted_tags:
+            self.tags_store.append([tag.id, tag.name, position])
+
+    # SELECTORS GETTERS
+    def _getSelectedTag(self, widget):
+        '''
+            Return the tag selected in the widget.
+            Widget should extend Gtk.Entry.
+        '''
+        tag_name = widget.get_text()
+        matched_tags = list(filter(lambda t: t.name == tag_name, self.ctrl.tags))
+        if(len(matched_tags) == 0):
+            return None
+        else:
+            return matched_tags[0]
 
     # SIGNALS
     def _getWidgetText(self, selector_id):
@@ -133,7 +169,10 @@ class EditorUI(BaseInterface):
             self.createMessageDialog("Error", "Could not rename the metatag %s" % metatag.name)
 
     def onEditTag(self, widget):
-        tag = self._getSelectorElement("EditTagSelect", self.ctrl.tags)
+        tag_widget = self.builder.get_object("EditTagSelect")
+        tag = self._getSelectedTag(tag_widget)
+        if tag is None:
+            return
         new_name = self._getWidgetText("EditTagName")
         new_metatag = self._getSelectorElement("EditTagMetatagSelect", self.ctrl.metatags)
         if tag is None or len(new_name) == 0 or new_metatag is None:
@@ -157,7 +196,8 @@ class EditorUI(BaseInterface):
                                                onConfirm)
 
     def onDeleteTag(self, widget):
-        tag = self._getSelectorElement("DeleteTagSelect", self.ctrl.tags)
+        tag_widget = self.builder.get_object("DeleteTagSelect")
+        tag = self._getSelectedTag(tag_widget)
         if tag is None:
             return
         onConfirm = lambda : self.onDeleteTagReal(tag)
@@ -186,8 +226,9 @@ class EditorUI(BaseInterface):
         label = self.builder.get_object("EditMetatagName")
         label.set_text(metatag.name)
 
-    def onTagChanged(self, widget):
-        tag = self._getSelectorElement("EditTagSelect", self.ctrl.tags)
+    def onTagChanged(self, widget, model, path):
+        _, _, index = model[path]
+        tag = self.ctrl.tags[index]
         if tag is None:
             return
         # Set name
