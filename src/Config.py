@@ -64,7 +64,10 @@ class UISettings(ChildConfig):
         return self.getConfig(UI_MOVER_METATAGS)
 
     def getMoverCustomEntries(self):
-        return self.getConfig(UI_MOVER_CUSTOM_ENTRIES)
+        entries = self.getConfig(UI_MOVER_CUSTOM_ENTRIES)
+        if entries is None:
+            entries = {}
+        return entries
 
     def getFastFilter(self):
         return self.getConfig(UI_FAST_FILTER)
