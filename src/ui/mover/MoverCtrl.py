@@ -37,7 +37,9 @@ class MoverCtrl(BaseController):
             for name, selector in metatags.items():
                 metatag = metatagsDao.getByName(name)
                 self.metatags[metatag] = selector
+        self.custom_entries = ConfigManager.UI.getMoverCustomEntries()
         self.target_folder_pattern = ConfigManager.UI.getMoverTargetFolder()
+        self.target_name_pattern = ConfigManager.UI.getMoverTargetName()
         self.custom_target_keys = ConfigManager.UI.getMoverCustomPatternKeys()
         if self.custom_target_keys is not None:
             self.custom_target_keys_evaluator = self._loadCustomKeysEvaluator()

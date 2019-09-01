@@ -44,7 +44,9 @@ UI_METATAG = ConfigSetting("default-metatag", "Set metatags automatically select
 UI_RANDOMIZE = ConfigSetting("randomize", "Show a set of random files when there are no search parameters set", False)
 UI_FAST_FILTER = ConfigSetting("fast_filter", "Enable search as you type for the name filter in the browser",False)
 UI_MOVER_METATAGS = ConfigSetting("mover-metatags", "List of metatags to add to the mover dialog")
+UI_MOVER_CUSTOM_ENTRIES = ConfigSetting("mover-custom-entries", "List of custom entries to add to the mover dialog")
 UI_MOVER_TARGET_FOLDER = ConfigSetting("mover-target-folder", "Pattern of the target folder in the mover")
+UI_MOVER_TARGET_NAME = ConfigSetting("mover-target-name", "Pattern of the target name in the mover")
 UI_MOVER_CUSTOM_PATTERN_KEYS = ConfigSetting("mover-custom-keys", "List of custom keys used in the target pattern")
 UI_MOVER_OPEN_ON_TAG = ConfigSetting("mover-open-on-tag", "Open the file after moving", False)
 UI_TAGGER_AUTCOMPLETE_METATAGS = ConfigSetting("tagger-allowed-cetegories", "List of categories used in the autocomplete")
@@ -61,11 +63,17 @@ class UISettings(ChildConfig):
     def getMoverMetatags(self):
         return self.getConfig(UI_MOVER_METATAGS)
 
+    def getMoverCustomEntries(self):
+        return self.getConfig(UI_MOVER_CUSTOM_ENTRIES)
+
     def getFastFilter(self):
         return self.getConfig(UI_FAST_FILTER)
 
     def getMoverTargetFolder(self):
         return self.getConfig(UI_MOVER_TARGET_FOLDER)
+
+    def getMoverTargetName(self):
+        return self.getConfig(UI_MOVER_TARGET_NAME)
 
     def getMoverCustomPatternKeys(self):
         return self.getConfig(UI_MOVER_CUSTOM_PATTERN_KEYS)

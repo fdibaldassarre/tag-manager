@@ -17,6 +17,8 @@ from src.ui.common import BaseInterface
 SELECTOR_AUTOCOMPLETE = "Autocomplete"
 SELECTOR_COMBOBOX = "ComboBox"
 
+SELECTOR_FREETEXT = "FreeText"
+
 DEFAULT_TARGET_NAME = "name"
 DEFAULT_METATAGS = "metatags"
 
@@ -28,6 +30,7 @@ class MoverUI(BaseInterface):
         super().__init__(*args, **kwargs)
         self.window = None
         self.metatag_selectors = {}
+        self.custom_selectors = {}
         self.suggested_tags = []
         self.log.debug("Done")
 
@@ -47,6 +50,11 @@ class MoverUI(BaseInterface):
         app.add_window(self.window)
         # Build custom components
         self._buildCustom()
+        # Setup target name cell
+        print(self.ctrl.target_name_pattern)
+        if self.ctrl.target_name_pattern is not None:
+            entry = self.builder.get_object('DestinationName')
+            entry.set_editable(False)
         # Register the update events
         self.ctrl.onUpdatePath(self.onPathChange)
         # Connect signals
@@ -71,6 +79,14 @@ class MoverUI(BaseInterface):
             box = self._buildSelectorBox(metatag, selector)
             custom_box.add(box)
             '''
+        for entry_name, entry in self.ctrl.custom_entries.items():
+            selector = None
+            if entry["type"] == SELECTOR_FREETEXT:
+                selector = self._buildFreeTextEntry(entry_name, entry)
+            if selector is None:
+                continue
+            self.custom_selectors[entry_name] = selector
+            self._addEntryToCustomSelectors(custom_box, entry_name, selector)
         custom_box.show_all()
         self.onSelectorValueChaged()
         # Build suggested tags
@@ -81,17 +97,11 @@ class MoverUI(BaseInterface):
             self._build()
         self.window.show()
 
-    # Build helpers
-    '''
-    def _buildSelectorBox(self, metatag, selector):
-        label = Gtk.Label(metatag.name + ": ")
-        box = Gtk.Box(Gtk.Orientation.HORIZONTAL, 10)
-        box.add(label)
-        box.add(selector)
-        return box
-    '''
     def _addToCustomSelectors(self, custom_grid, metatag, selector):
-        label = Gtk.Label(metatag.name + ": ")
+        self._addEntryToCustomSelectors(custom_grid, metatag.name, selector)
+
+    def _addEntryToCustomSelectors(self, custom_grid, entry_name, selector):
+        label = Gtk.Label(entry_name + ": ")
         custom_grid.add(label)
         custom_grid.attach_next_to(selector, label, Gtk.PositionType.RIGHT, 1, 1)
 
@@ -152,6 +162,13 @@ class MoverUI(BaseInterface):
         selector.connect("changed", self.onSelectorChanged, metatag)
         return selector
 
+    def _buildFreeTextEntry(self, name, entry):
+        default_value = entry["default-value"]
+        selector = Gtk.Entry()
+        selector.set_text(default_value)
+        selector.connect("changed", self.onCustomSelectorChanged, name)
+        return selector
+
     def _getMetatagDefaultValue(self, metatag):
         '''
             Get the default value for a metatag.
@@ -190,6 +207,17 @@ class MoverUI(BaseInterface):
             value = widget.get_text().strip()
         return value
 
+    def _getPatternBasicReplace(self):
+        '''
+            Common keywords.
+
+            {_FileExtension}: source filename extension, None if it is a folder
+        '''
+        replacements = {}
+        _, ext = os.path.splitext(self.ctrl.path)
+        replacements["{_FileExtension}"] = ext
+        return replacements
+
     def _getPatternMetatagsReplace(self):
         '''
             Get a dictionary with the replacements.
@@ -202,6 +230,14 @@ class MoverUI(BaseInterface):
         for metatag, selector in self.metatag_selectors.items():
             value = self._getSelectorValue(metatag, selector)
             replace_key = "{%s}" % metatag.name
+            replacements[replace_key] = value
+        return replacements
+
+    def _getPatternCustomEntriesReplace(self):
+        replacements = {}
+        for entry_name, selector in self.custom_selectors.items():
+            value = self._getSelectorValue(None, selector)
+            replace_key = "{%s}" % entry_name
             replacements[replace_key] = value
         return replacements
 
@@ -235,10 +271,22 @@ class MoverUI(BaseInterface):
             :return: Evaluated target folder
             :rtype: str
         '''
-        pattern = self.ctrl.target_folder_pattern
+        target_folder = self._evaluatePattern(self.ctrl.target_folder_pattern)
+        if target_folder.startswith('/'):
+            target_folder = target_folder[1:]
+        if not target_folder.endswith('/'):
+            target_folder = target_folder + '/'
+        return target_folder
+
+    def _evaluateTargetNamePattern(self):
+        return self._evaluatePattern(self.ctrl.target_name_pattern)
+
+    def _evaluatePattern(self, pattern):
         if pattern is None:
             return '/'
-        replacements = self._getPatternMetatagsReplace()
+        replacements = self._getPatternBasicReplace()
+        replacements.update(self._getPatternMetatagsReplace())
+        replacements.update(self._getPatternCustomEntriesReplace())
         advanced_replacements = self._getPatternAdvancedReplace(replacements)
         self.log.debug("Advanced replacements %s" % str(advanced_replacements))
         for key, value in replacements.items():
@@ -247,8 +295,6 @@ class MoverUI(BaseInterface):
             pattern = pattern.replace(key, value)
         # Replace replicated /
         pattern = pattern.replace('//', '/')
-        if not pattern.endswith('/'):
-            pattern = pattern + '/'
         return pattern
 
     def _setDefaultTargetName(self, name):
@@ -294,9 +340,16 @@ class MoverUI(BaseInterface):
         self.log.debug("New value: %s" % value)
         self.onSelectorValueChaged()
 
+    def onCustomSelectorChanged(self, widget, name):
+        self.log.debug("Selector for %s changed" % name)
+        self.onSelectorValueChaged()
+
     def onSelectorValueChaged(self):
         target_folder = self._evaluateTargetFolderPattern()
         self.setDestinationFolder(target_folder)
+        if self.ctrl.target_name_pattern is not None:
+            target_name = self._evaluateTargetNamePattern()
+            self.setDestinationName(target_name)
 
     # Public methods
     def onPathChange(self):
