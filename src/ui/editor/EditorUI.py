@@ -178,7 +178,7 @@ class EditorUI(BaseInterface):
         success = self.ctrl.editTag(tag, new_name, new_metatag)
         if success:
             # Reset
-            self._resetSelector("EditTagSelect")
+            self._resetLabel("EditTagSelect")
             self._resetLabel("EditTagName")
             self._resetSelector("EditTagMetatagSelect")
         else:
@@ -213,7 +213,7 @@ class EditorUI(BaseInterface):
     def onDeleteTagReal(self, tag):
         success = self.ctrl.deleteTag(tag)
         if success:
-            self._resetSelector("DeleteTagSelect")
+            self._resetLabel("DeleteTagSelect")
         else:
             self.createMessageDialog("Error", "Could not delete tag %s" % tag.name)
 
