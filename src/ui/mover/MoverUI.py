@@ -305,6 +305,8 @@ class MoverUI(BaseInterface):
             pattern = pattern.replace(key, value)
         # Replace replicated /
         pattern = pattern.replace('//', '/')
+        # Remove special characters
+        pattern = pattern.replace('?', '').replace('!', '').replace('*', '').replace(':', '')
         return pattern
 
     def _setDefaultTargetName(self, name):
