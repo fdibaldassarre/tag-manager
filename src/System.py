@@ -56,7 +56,8 @@ def addFile(path):
 
 def removeFile(file):
     '''
-        Remove a file from database and filesystem.
+        Remove a file from database and open base folder
+        to allow manual cleanup.
 
         :param dao.entities.IFileLazy: file
     '''
@@ -65,8 +66,8 @@ def removeFile(file):
     path = os.path.join(ConfigManager.getRoot(), file.name)
     if os.path.exists(path):
         if os.path.isdir(path):
-            # shutil.rmtree(path)
-            # Open folder to delete manually
-            openFile(path)
+            folder_to_open = path
         else:
-            os.remove(path)
+            folder_to_open = os.path.dirname(path)
+        # Open folder to delete manually
+        openFile(folder_to_open)
