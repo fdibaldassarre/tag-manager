@@ -56,6 +56,16 @@ class TagsDAO(EntityDAO):
 
     @withSession
     @returnNonPersistent
+    def getByFile(self, file, metatag=None):
+        query = self._session.query(Tag)
+        pfile = File(id=file.id)
+        query = query.filter(Tag.files.contains(pfile))
+        if metatag is not None:
+            query = query.filter_by(metatag_id=metatag.id)
+        return query.all()
+
+    @withSession
+    @returnNonPersistent
     def getByNameLike(self, name):
         '''
             Find all the tags with a certain name.
