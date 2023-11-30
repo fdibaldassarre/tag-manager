@@ -23,11 +23,7 @@ class CommonResource(Resource):
             :param schema: Schema
             :return: JSON serialized data
         '''
-        data, errors = schema.dump(data)
-        if errors:
-            raise MarschalException(
-                "Could not serialize return data using the given schema")
-        return data
+        return schema.dump(data)
 
 
 class BaseResource(CommonResource):
